@@ -1,6 +1,11 @@
 /* Panel de Moisés · productos, marcas, secciones y ajustes (prototipo) */
 (function () {
   'use strict';
+  /* saludo según quién entró: usa GRCFG.names (correo -> nombre); si no está, el nombre del dueño de la tienda */
+  function whoName(st) {
+    var mail = (GR.user && GR.user() || '').toLowerCase(), names = (window.GRCFG && window.GRCFG.names) || {};
+    return names[mail] || (st && st.owner) || 'Moisés';
+  }
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -54,7 +59,7 @@
     var ev = M.ev;
     var readyN = [hasWa, mine > 0, !!(s.community || '').trim(), nets === 3].filter(Boolean).length;
     v.innerHTML =
-      '<div class="sec-head"><div><h2>Hola, ' + esc(s.owner || 'Moisés') + '</h2><p>Aquí manejas tu tienda sin llamar a nadie: subes pares, cambias precios y creas marcas y secciones. Todo lo que cambies se ve al instante en la tienda.</p></div><a class="btn" href="store.html">Ver la tienda</a></div>' +
+      '<div class="sec-head"><div><h2>Hola, ' + esc(whoName(s)) + '</h2><p>Aquí manejas tu tienda sin llamar a nadie: subes pares, cambias precios y creas marcas y secciones. Todo lo que cambies se ve al instante en la tienda.</p></div><a class="btn" href="store.html">Ver la tienda</a></div>' +
       '<div class="quick"><button type="button" class="qk hot" data-new><b>+</b><span>Subir un par</span></button><button type="button" class="qk" data-go="brands"><b>#</b><span>Marcas</span></button><button type="button" class="qk" data-go="settings"><b>⚙</b><span>Ajustes</span></button></div>' +
       '<div class="stats">' +
       '<div class="stat"><b>' + vis + '</b><span>Pares visibles</span></div>' +
