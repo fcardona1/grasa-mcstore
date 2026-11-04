@@ -32,7 +32,7 @@
 
   /* ---------- navegación ---------- */
   function setTab(t) {
-    tab = t; arm = null;
+    tab = t; arm = null; window.scrollTo(0, 0); document.body.dataset.tab = t;
     $$('#tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === t)); });
     render();
   }
@@ -52,8 +52,10 @@
     var log = (d.log || []);
     if (GR.live) log = [];
     var ev = M.ev;
+    var readyN = [hasWa, mine > 0, !!(s.community || '').trim(), nets === 3].filter(Boolean).length;
     v.innerHTML =
       '<div class="sec-head"><div><h2>Hola, ' + esc(s.owner || 'Moisés') + '</h2><p>Aquí manejas tu tienda sin llamar a nadie: subes pares, cambias precios y creas marcas y secciones. Todo lo que cambies se ve al instante en la tienda.</p></div><a class="btn" href="store.html">Ver la tienda</a></div>' +
+      '<div class="quick"><button type="button" class="qk hot" data-new><b>+</b><span>Subir un par</span></button><button type="button" class="qk" data-go="brands"><b>#</b><span>Marcas</span></button><button type="button" class="qk" data-go="settings"><b>⚙</b><span>Ajustes</span></button></div>' +
       '<div class="stats">' +
       '<div class="stat"><b>' + vis + '</b><span>Pares visibles</span></div>' +
       '<div class="stat hot"><b>' + sold + '</b><span>Agotados</span></div>' +
@@ -62,7 +64,7 @@
         '<div class="stat"><b>' + d.brands.length + '</b><span>Marcas</span></div>' +
         '<div class="stat"><b>' + d.sections.length + '</b><span>Secciones</span></div></div>') +
       '<div class="two-col">' +
-      '<section class="box"><h3>Para dejarla lista</h3><ul class="todo">' +
+      '<section class="box"><h3>Para dejarla lista <em class="pct">' + readyN + '/4</em></h3><div class="prog"><i style="width:' + (readyN * 25) + '%"></i></div><ul class="todo">' +
       todo(hasWa, 'WhatsApp de ' + esc(s.owner || 'Moisés') + ': ' + esc(GR.prettyPhone(s.whatsapp)), 'settings') +
       todo(mine > 0, mine > 0 ? plural(mine, 'par subido', 'pares subidos') : 'Sube tu primer par', 'products') +
       todo(!!(s.community || '').trim(), 'Link de la comunidad', 'settings') +
@@ -348,6 +350,7 @@
     if (tab === 'home') render();
   });
 
+  window.addEventListener('scroll', function () { document.body.classList.toggle('atend', window.scrollY + innerHeight > document.documentElement.scrollHeight - 140); }, { passive: true });
   GR.status = function (st) {
     if (st === 'error') toast('Sin conexión: se guardará al volver internet.');
     if (st === 'auth') { toast('Tu sesión venció. Entra de nuevo.'); setTimeout(function () { GR.logout(); location.reload(); }, 1800); }
@@ -355,7 +358,8 @@
   window.addEventListener('beforeunload', function (e) { if (GR.live && GR.pending && GR.pending()) { e.preventDefault(); e.returnValue = ''; } });
 
   function start() {
-    document.body.classList.remove('locked');
+    document.body.classList.remove('locked'); document.body.dataset.tab = tab;
+    if (GR.live) { var to = $('#topOut'); if (to) to.hidden = false; }
     render();
     if (GR.live) GR.init(function () { d = GR.get(); if (!F) render(); loadMetrics(); });
   }
@@ -367,7 +371,7 @@
       '<div class="field"><label for="lgP">Contraseña</label><div class="pw"><input class="in" id="lgP" type="password" autocomplete="current-password"><button type="button" class="eye" id="lgEye" aria-label="Mostrar contraseña">👁</button></div></div>' +
       '<label class="rem"><input type="checkbox" id="lgR" checked> Recordarme en este equipo</label>' +
       '<p class="err" id="lgErr" role="alert" hidden></p><button class="btn" type="submit" id="lgB">Entrar</button>' +
-      '<p class="by">Desarrollado por <a href="https://www.onytek.co" target="_blank" rel="noopener">Onytek</a></p></form>';
+      '<div class="lg-on"><a href="https://www.onytek.co" target="_blank" rel="noopener" aria-label="Onytek, abrir www.onytek.co"><img src="img/onytek.png" alt="Onytek" width="640" height="118"></a><p class="by">Desarrollado por <a href="https://www.onytek.co" target="_blank" rel="noopener">Onytek</a></p></div></form>';
     document.body.appendChild(el);
     $('#lgEye').addEventListener('click', function () { var i = $('#lgP'); var sh = i.type === 'password'; i.type = sh ? 'text' : 'password'; this.setAttribute('aria-label', sh ? 'Ocultar contraseña' : 'Mostrar contraseña'); this.style.opacity = sh ? 1 : .6; });
     $('#lgf').addEventListener('submit', function (e) {
