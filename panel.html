@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel GRA$A MC-STORE</title>
+<link rel="icon" href="img/favicon.png">
+<link rel="manifest" href="/panel.webmanifest">
+<link rel="apple-touch-icon" href="/img/app-192.png">
+<meta name="theme-color" content="#0B0B0D">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;700&family=Barlow+Condensed:wght@600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="panel.css">
+<link rel="stylesheet" href="mobile-panel.css">
+</head>
+<body>
+<header class="ptop">
+  <div class="wrap pbar">
+    <img class="emb" src="img/emblema.png" alt="" width="520" height="520">
+    <div class="ptitle">
+      <p class="eyebrow">Panel de control</p>
+      <h1>GRA$A MC-STORE</h1>
+    </div>
+    <a class="btn small" href="/">Tienda</a>
+  </div>
+  <div class="wrap">
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Secciones del panel">
+      <button role="tab" data-tab="home" aria-selected="true">Resumen</button>
+      <button role="tab" data-tab="products" aria-selected="false">Productos</button>
+      <button role="tab" data-tab="brands" aria-selected="false">Marcas</button>
+      <button role="tab" data-tab="sections" aria-selected="false">Secciones</button>
+      <button role="tab" data-tab="settings" aria-selected="false">Ajustes</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap pmain" id="view" tabindex="-1"></main>
+
+<div class="wrap">
+  <div class="sign">
+    <p>Tecnología con propósito, ejecución con precisión.</p>
+    <span class="by">Desarrollado por</span>
+    <a href="https://www.onytek.co" target="_blank" rel="noopener" aria-label="Onytek, abrir www.onytek.co"><img src="img/onytek.png" alt="Onytek" width="640" height="118"></a>
+  </div>
+</div>
+
+<!-- formulario de producto -->
+<div class="layer" id="form" aria-hidden="true">
+  <div class="scrim"></div>
+  <form class="sheet" id="pf" role="dialog" aria-modal="true" aria-labelledby="fTitle" novalidate>
+    <div class="f-head">
+      <h2 id="fTitle">Nuevo producto</h2>
+      <button class="xbtn" type="button" data-close aria-label="Cerrar">×</button>
+    </div>
+    <div class="f-body">
+      <div class="photo-box">
+        <div class="ph" id="phPrev"></div>
+        <div class="ph-actions">
+          <label class="btn small" for="pfFile">Subir foto</label>
+          <input id="pfFile" type="file" accept="image/*" class="sr">
+          <button class="btn small ghost" type="button" id="pfNoPhoto">Quitar foto</button>
+          <p class="muted small">Desde el celular puedes tomar la foto o escogerla de la galería.</p>
+        </div>
+      </div>
+      <div class="field"><label for="pfName">Nombre del par</label><input class="in" id="pfName" maxlength="60" placeholder="Ej. Retro Alta Rojo y Negro" autocomplete="off"></div>
+      <div class="two">
+        <div class="field"><label for="pfBrand">Marca</label><select class="in" id="pfBrand"></select></div>
+        <div class="field"><label for="pfPrice">Precio (COP)</label><input class="in" id="pfPrice" inputmode="numeric" placeholder="450000" autocomplete="off"></div>
+      </div>
+      <div class="field"><label for="pfOld">Precio anterior (solo si está en promoción)</label><input class="in" id="pfOld" inputmode="numeric" placeholder="Déjalo vacío si no hay promoción" autocomplete="off"></div>
+      <div class="field"><span class="lbl">Dónde aparece</span><div class="checks" id="pfSecs"></div></div>
+      <div class="field">
+        <div class="lbl-row"><span class="lbl">Tallas disponibles (EU)</span><span class="quick"><button type="button" class="mini" id="pfAll">Todas</button><button type="button" class="mini" id="pfNone">Ninguna</button></span></div>
+        <div class="sizes" id="pfSizes"></div>
+      </div>
+      <div class="field"><label for="pfDesc">Descripción corta</label><textarea class="in" id="pfDesc" maxlength="160" placeholder="Color, material, algo que lo haga especial"></textarea></div>
+      <div class="field" id="drawBox">
+        <span class="lbl">Dibujo de ejemplo (se usa solo si no subes foto)</span>
+        <div class="pal" id="pfPal"></div>
+        <div class="seg" role="group" aria-label="Forma">
+          <button type="button" data-style="low" aria-pressed="true">Caña baja</button>
+          <button type="button" data-style="high" aria-pressed="false">Caña alta</button>
+        </div>
+      </div>
+      <div class="two switches">
+        <label class="sw"><input type="checkbox" id="pfSold"><span>Agotado</span></label>
+        <label class="sw"><input type="checkbox" id="pfHidden"><span>Ocultar de la tienda</span></label>
+      </div>
+      <p class="err" id="pfErr" role="alert" hidden></p>
+    </div>
+    <div class="f-foot">
+      <button class="btn ghost" type="button" data-close>Cancelar</button>
+      <button class="btn" type="submit" id="pfSave">Guardar producto</button>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="cloud.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>

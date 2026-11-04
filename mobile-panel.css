@@ -1,0 +1,15 @@
+html,body{overflow-x:clip;max-width:100%}
+.scrim{touch-action:none}
+.sheet{overscroll-behavior:contain}
+body.lock{overflow:hidden}
+@media (max-width:719px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  .ptop{position:sticky;backdrop-filter:none;-webkit-backdrop-filter:none;background:#0B0B0D}
+  .pbar{padding-block:.5rem}
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;overflow:visible;gap:0;background:#0B0B0D;border-top:3px solid var(--red,#D62839);padding:0 max(0px,env(safe-area-inset-left,0px)) env(safe-area-inset-bottom,0px) max(0px,env(safe-area-inset-right,0px))}
+  .tabs button{flex:1;min-width:0;min-height:58px;padding:0 2px;border-bottom:0;border-top:3px solid transparent;margin-top:-3px;font-size:.72rem;letter-spacing:.06em}
+  .tabs button[aria-selected="true"]{border-top-color:#fff}
+  .pmain{padding-block:1rem 1.5rem}
+  .sheet{max-height:94dvh}
+  .f-foot{position:sticky;bottom:0;background:var(--card)}
+}

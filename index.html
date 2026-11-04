@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GRA$A MC-STORE</title>
+<link rel="icon" href="img/favicon.png">
+<meta name="description" content="GRA$A MC-STORE: tennis originales para hombre y mujer. Elige tu par, marca tu talla y pregunta por WhatsApp.">
+<meta name="theme-color" content="#0B0B0D">
+<meta property="og:type" content="website"><meta property="og:title" content="GRA$A MC-STORE · Tu talla. Tu estilo. Tu calle.">
+<meta property="og:description" content="Tennis para hombre y mujer. Pide por WhatsApp con tu talla.">
+<meta property="og:image" content="https://grasa.onytek.co/img/logo-hero.jpg"><meta property="og:url" content="https://grasa.onytek.co/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;700&family=Barlow+Condensed:wght@600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="store.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.174-.3-.019-.465.13-.615.136-.135.301-.345.451-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.172-.015-.371-.015-.571-.015-.2 0-.523.074-.797.359-.273.3-1.045 1.02-1.045 2.475s1.07 2.865 1.219 3.075c.149.18 2.095 3.195 5.076 4.483.709.3 1.263.489 1.694.626.712.226 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
+</svg>
+
+<a class="sr" href="#catalogo">Ir al catálogo</a>
+
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="brand-link" href="#top" aria-label="GRA$A MC-STORE, inicio"><img src="img/logo-horizontal.png" alt="GRA$A MC-STORE" width="760" height="304"></a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#catalogo">Tennis</a>
+      <a href="#talla">Mi talla</a>
+      <a href="#comunidad">Comunidad</a>
+    </nav>
+    <div class="actions">
+      <button class="sizepill" id="sizePill" type="button" hidden aria-label="Quitar mi talla"></button>
+      <button class="cartbtn" id="cartBtn" type="button" aria-label="Abrir mi caja">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l2-4h14l2 4v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 9h18M9 13h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Mi caja</span><b id="cartCount">0</b>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- PORTADA: pared de calle con el logo como sticker -->
+  <section class="hero" id="hero" aria-labelledby="h1">
+    <canvas class="spray" id="spray" aria-hidden="true"></canvas>
+    <div class="hero-bg" aria-hidden="true">
+      <span class="bgword w1">GRA$A</span>
+      <span class="bgword w2">MC</span>
+      <span class="splat s1"></span><span class="splat s2"></span><span class="splat s3"></span>
+      <svg class="doodle d-crown" viewBox="0 0 64 48"><path d="M6 40 L10 12 L24 26 L32 6 L40 26 L54 12 L58 40 Z M8 44 H56" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <svg class="doodle d-star" viewBox="0 0 48 48"><path d="M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
+      <svg class="doodle d-arrow" viewBox="0 0 120 70"><path d="M6 50 C30 10 70 8 104 30 M104 30 L84 22 M104 30 L96 50" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Tienda de tennis · Pide por WhatsApp</p>
+        <h1 id="h1"><span class="l1">Pisa con</span><span class="l2wrap"><span class="chrome l2">GRA$A</span><i class="drip dr1"></i><i class="drip dr2"></i><i class="drip dr3"></i></span></h1>
+        <p class="marker tagline" id="tagline"></p>
+        <p class="lead" id="lead"></p>
+        <div class="cta">
+          <a class="btn" href="#catalogo">Ver los tennis</a>
+          <a class="btn ghost" href="#talla">Encuentra tu talla</a>
+        </div>
+        <ol class="steps" aria-label="Cómo pedir">
+          <li><b>1</b><span>Elige tu par</span></li>
+          <li><b>2</b><span>Marca tu talla</span></li>
+          <li><b>3</b><span>Pregunta por WhatsApp</span></li>
+        </ol>
+        <p class="marker spray-hint"><span class="only-mouse">Mueve el mouse y pinta la pared.</span><span class="only-touch">Toca el sticker.</span></p>
+      </div>
+      <div class="hero-art" id="art">
+        <div class="floats" id="floats" aria-hidden="true"></div>
+        <button class="sticker-btn" id="stickerBtn" type="button" aria-label="Logo GRA$A MC-STORE: toca para moverlo">
+          <img class="sticker" src="img/logo-sticker.png" alt="Logo de GRA$A MC-STORE: Moisés rodeado de zapatillas, engranaje y llamas" width="600" height="785" fetchpriority="high">
+          <span class="tape tp1" aria-hidden="true"></span><span class="tape tp2" aria-hidden="true"></span>
+        </button>
+        <svg class="badge-round" viewBox="0 0 120 120" aria-hidden="true">
+          <defs><path id="circ" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs>
+          <circle cx="60" cy="60" r="56" fill="#F1F0EE" stroke="#000" stroke-width="4"/>
+          <text font-family="Anton, Impact, sans-serif" font-size="12.5" fill="#0B0B0D"><textPath href="#circ" textLength="268" lengthAdjust="spacing">PIDE POR WHATSAPP · TU TALLA · </textPath></text>
+          <use href="#i-wa" x="40" y="40" width="40" height="40" color="#D62839"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- cintas cruzadas -->
+  <div class="tapes" aria-hidden="true">
+    <div class="band b-red"><div class="track" id="trackA"></div></div>
+    <div class="band b-black"><div class="track rev" id="trackB"></div></div>
+  </div>
+
+  <!-- TALLA: etiqueta de caja de zapatos -->
+  <section class="band-size" id="talla" aria-labelledby="hTalla">
+    <div class="wrap size-grid">
+      <div class="size-copy">
+        <p class="eyebrow">Antes de escoger</p>
+        <h2 id="hTalla"><span class="hl">Encuentra</span> tu talla</h2>
+        <p class="muted">Apoya el talón contra una pared, marca la punta del dedo más largo y mide hasta ahí en centímetros. Mueve la regla y te decimos qué talla pedir.</p>
+        <p class="marker note-m">Si dudas entre dos tallas, pregúntale a Moisés.</p>
+      </div>
+      <div class="boxlabel">
+        <div class="bl-head"><b>GRA$A MC-STORE</b><span>Size label</span></div>
+        <div class="bl-main">
+          <div class="bl-size"><span>Talla EU</span><b id="euOut">40</b></div>
+          <div class="bl-side">
+            <div><span>US hombre</span><b id="usOut">7</b></div>
+            <div><span>Tu pie</span><b><output id="cmOut" for="cm">25.0</output> cm</b></div>
+          </div>
+        </div>
+        <div class="ruler-box">
+          <label class="lbl" for="cm">Largo de tu pie</label>
+          <div class="ruler" aria-hidden="true"><span>22</span><span>24</span><span>26</span><span>28</span><span>30</span></div>
+          <input id="cm" type="range" min="22" max="31" step="0.1" value="25">
+        </div>
+        <div class="szrow" id="szRow" role="group" aria-label="Todas las tallas"></div>
+        <button class="btn" id="useSize" type="button">Mostrar solo mi talla</button>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog" id="catalogo" aria-labelledby="hCat">
+    <div class="wrap">
+      <div class="cat-head">
+        <div>
+          <p class="eyebrow">El catálogo</p>
+          <h2 id="hCat">Los <span class="hl">tennis</span></h2>
+        </div>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
+      <div class="tools">
+        <div class="chips" id="secChips" role="group" aria-label="Sección"></div>
+        <div class="chips" id="brandChips" role="group" aria-label="Marca"></div>
+        <div class="row3">
+          <div class="field grow">
+            <label class="sr" for="q">Buscar</label>
+            <input class="in" id="q" type="search" placeholder="Buscar por nombre, marca o referencia" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="sr" for="sort">Ordenar</label>
+            <select class="in" id="sort">
+              <option value="new">Más nuevos</option>
+              <option value="low">Precio: menor a mayor</option>
+              <option value="high">Precio: mayor a menor</option>
+              <option value="promo">Mayor descuento</option>
+            </select>
+          </div>
+          <button class="chip mine" id="mine" type="button" aria-pressed="false">Solo mi talla</button>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" hidden>
+        <p class="marker">Nada por aquí.</p>
+        <p class="muted" id="emptyMsg">Prueba con otra sección, otra marca o quita el filtro de talla.</p>
+        <button class="btn ghost small" id="clear" type="button">Quitar filtros</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMUNIDAD: afiche pegado en la pared -->
+  <section class="community" id="comunidad" aria-labelledby="hCom">
+    <div class="wrap">
+      <div class="poster">
+        <span class="tape tp3" aria-hidden="true"></span><span class="tape tp4" aria-hidden="true"></span>
+        <div class="poster-copy">
+          <p class="eyebrow">Dentro del círculo</p>
+          <h2 id="hCom">Únete a la comunidad <span class="red">GRA$A</span></h2>
+          <p class="lead">Entérate primero de los pares nuevos, las promociones y las tallas que llegan.</p>
+          <div id="comBtn"></div>
+          <div class="socials" id="socials"></div>
+        </div>
+        <img class="poster-emblem" src="img/emblema.png" alt="" width="520" height="520" loading="lazy">
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-bg" aria-hidden="true"><span>GRA$A</span></div>
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img class="foot-logo" src="img/logo-horizontal.png" alt="GRA$A MC-STORE" width="760" height="304" loading="lazy">
+        <p class="slogan-tape" id="footTag"></p>
+      </div>
+      <div class="fcard">
+        <p class="lbl">Escríbenos</p>
+        <a class="phone" id="footPhone" href="#" target="_blank" rel="noopener"></a>
+        <a class="btn wa small" id="footWa" href="#" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>Hablar con Moisés</a>
+      </div>
+      <div class="fcard">
+        <p class="lbl">Síguenos</p>
+        <div class="socials sm" id="footSocials"></div>
+        <div id="footCom"></div>
+      </div>
+      <div class="fcard">
+        <p class="lbl">La tienda</p>
+        <nav class="flinks" aria-label="Pie de página">
+          <a href="#catalogo">Los tennis</a>
+          <a href="#talla">Encuentra tu talla</a>
+          <a href="#comunidad">Comunidad</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="onytek">
+      <div class="on-logo">
+        <span class="by">Desarrollado por</span>
+        <a href="https://www.onytek.co" target="_blank" rel="noopener" aria-label="Onytek, abrir www.onytek.co"><img src="img/onytek.png" alt="Onytek" width="640" height="118" loading="lazy"></a>
+      </div>
+      <p class="on-lema">Tecnología con propósito, <span>ejecución con precisión.</span></p>
+    </div>
+  </div>
+</footer>
+
+<nav class="bnav" id="bnav" aria-label="Navegación">
+  <a href="#top" data-sec-id="hero"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Inicio</span></a>
+  <a href="#catalogo" data-sec-id="catalogo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16c0-3 2-4 5-5l3-2 2 3c2 1 5 1 8 3v3H3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Tennis</span></a>
+  <a href="#talla" data-sec-id="talla"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18v8H3Zm4 0v4m4-4v3m4-3v4m4-4v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Mi talla</span></a>
+  <a href="#comunidad" data-sec-id="comunidad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 20c.5-4 3-6 6.500-6s6 2 6.500 6M17 6a3 3 0 0 1 0 6m2.500 3c1.500.8 2.300 2.400 2.500 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Comunidad</span></a>
+  <button type="button" id="bCart" aria-label="Abrir mi caja"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l2-4h14l2 4v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Mi caja</span><b id="bCount" hidden>0</b></button>
+</nav>
+<link rel="stylesheet" href="mobile.css">
+<a class="wafab" id="waFab" href="#" target="_blank" rel="noopener" aria-label="Escribir a Moisés por WhatsApp">
+  <span class="wa-label">Escríbele a Moisés</span>
+  <span class="wa-dot"><svg aria-hidden="true"><use href="#i-wa"/></svg></span>
+</a>
+
+<!-- ficha de producto -->
+<div class="layer modal" id="modal" aria-hidden="true">
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <button class="x" type="button" data-close aria-label="Cerrar">×</button>
+    <div class="m-art" id="mArt"></div>
+    <div class="m-info">
+      <p class="eyebrow" id="mBrand"></p>
+      <h3 id="mTitle"></h3>
+      <p class="m-price" id="mPrice"></p>
+      <p class="muted" id="mDesc"></p>
+      <div class="m-tags" id="mTags"></div>
+      <div class="m-sizes">
+        <div class="m-sizes-head"><span class="lbl">Elige tu talla (EU)</span><a href="#talla" class="mini" data-close>No sé mi talla</a></div>
+        <div class="szgrid" id="mSizes" role="group" aria-label="Tallas"></div>
+        <p class="hint" id="mHint"></p>
+      </div>
+      <div class="bubble" id="mBubble" hidden>
+        <span class="lbl">Así le llega a <span class="ownerName">Moisés</span></span>
+        <pre id="mText"></pre>
+      </div>
+      <div class="m-actions">
+        <a class="btn wa" id="mWa" href="#" target="_blank" rel="noopener" aria-disabled="true">
+          <svg width="22" height="22" aria-hidden="true"><use href="#i-wa"/></svg>
+          <span id="mWaLabel">Preguntar disponibilidad</span>
+        </a>
+        <button class="btn ghost" id="mAdd" type="button">Agregar a mi caja</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- caja -->
+<div class="layer drawer" id="drawer" aria-hidden="true">
+  <div class="scrim"></div>
+  <aside class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="d-head">
+      <h3 id="dTitle">Mi caja</h3>
+      <button class="x static" type="button" data-close aria-label="Cerrar">×</button>
+    </div>
+    <div class="d-body" id="dBody"></div>
+    <div class="d-foot" id="dFoot"></div>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="cloud.js"></script>
+<script src="store.js"></script>
+<script src="mobile.js"></script>
+</body>
+</html>
