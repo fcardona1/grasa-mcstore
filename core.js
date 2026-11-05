@@ -31,7 +31,7 @@
     return {
       v: 1, seq: 11,
       settings: {
-        owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: '', whatsapp: '573145505717', slogan: 'Tu talla. Tu estilo. Tu calle.',
+        owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: 'https://open.spotify.com/intl-es/track/3t6SsMiA1b1Ju0HzKHIDSl', whatsapp: '573145505717', slogan: 'Tu talla. Tu estilo. Tu calle.',
         instagram: '', tiktok: 'https://www.tiktok.com/@grasamcstore33', facebook: '', community: 'https://chat.whatsapp.com/L0xldOMPQKaCPyI90AeyK0'
       },
       brands: [
