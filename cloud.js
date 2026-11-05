@@ -13,7 +13,7 @@
   function jset(s, k, v) { try { s.setItem(k, JSON.stringify(v)); } catch (e) { /* sin espacio */ } }
 
   function blank() {
-    return { v: 1, seq: 1, settings: { owner: 'Moisés', names: {}, whatsapp: '', slogan: '', instagram: '', tiktok: '', facebook: '', community: '' }, brands: [], sections: [], products: [], log: [] };
+    return { v: 1, seq: 1, settings: { owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: '', whatsapp: '', slogan: '', instagram: '', tiktok: '', facebook: '', community: '' }, brands: [], sections: [], products: [], log: [] };
   }
   var D = jget(localStorage, CACHE) || blank();
   function sane(x) {

@@ -41,6 +41,14 @@
     $('#footTag').textContent = s.slogan || '';
     $('#lead').innerHTML = 'Elige tu par, escoge tu talla y pregúntale a ' + o + ' si está disponible. El mensaje le llega listo, con la talla incluida.';
     $$('.ownerName').forEach(function (n) { n.textContent = s.owner || 'Moisés'; });
+    /* letrero + reproductor de Spotify (solo se vuelve a armar si cambia el enlace, para no cortar la música) */
+    var line = (s.banner || '').trim(), m = /open\.spotify\.com\/(?:intl-[a-z-]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]+)/.exec(s.spotify || '');
+    var src = m ? 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] + '?utm_source=generator&theme=0' : '';
+    $('#beat').hidden = !(line || src); $('#beatLine').textContent = line; $('#beatBox').hidden = !src;
+    var bp = $('#beatPlayer'); if (bp.dataset.src !== src) {
+      bp.dataset.src = src;
+      bp.innerHTML = src ? '<iframe title="Escucha la canción en Spotify" src="' + src + '" width="100%" height="' + (m[1] === 'track' ? 152 : 352) + '" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' : '';
+    }
     var hello = GR.waUrl(d, 'Hola ' + (s.owner || 'Moisés') + ' 👋 Vi la tienda GRA$A MC-STORE y quiero preguntarte por un par.');
     $('#waFab').href = hello;
     var fp = $('#footPhone'); fp.href = hello; fp.textContent = GR.prettyPhone(s.whatsapp);

@@ -271,6 +271,8 @@
       '<div class="field"><label for="sMe">Nombre de tu perfil</label><input class="in" id="sMe" value="' + esc(whoName(s)) + '" maxlength="40" placeholder="Ej. Fabian Cardona"><small class="muted">Es el nombre del saludo del panel cuando entras con tu correo' + (GR.live && GR.user() ? ' (' + esc(GR.user()) + ')' : '') + '. Cada persona que entra pone el suyo.</small></div>' +
       '<div class="two"><div class="field"><label for="sOwner">Nombre del dueño en la tienda</label><input class="in" id="sOwner" value="' + esc(s.owner) + '" maxlength="30"><small class="muted">Sale en “Hablar con…” y en los mensajes de WhatsApp.</small></div>' +
       '<div class="field"><label for="sWa">WhatsApp donde llegan los mensajes</label><input class="in" id="sWa" inputmode="tel" value="' + esc(GR.prettyPhone(s.whatsapp)) + '" placeholder="+57 300 000 0000"></div></div>' +
+      '<div class="field"><label for="sBanner">Frase del letrero grande</label><input class="in" id="sBanner" value="' + esc(s.banner || '') + '" maxlength="70" placeholder="Ej. Mis pies no alcanzan para tanto par."><small class="muted">Sale en grande entre los tennis y la comunidad. Déjala vacía si no quieres letrero.</small></div>' +
+      '<div class="field"><label for="sSpot">Canción de Spotify' + pend('spotify') + '</label><input class="in" id="sSpot" inputmode="url" value="' + esc(s.spotify || '') + '" placeholder="https://open.spotify.com/track/..."><small class="muted">En Spotify: toca los tres puntos de la canción, Compartir, Copiar enlace. Pégalo aquí.</small></div>' +
       '<div class="field"><label for="sSlogan">Frase de la tienda</label><input class="in" id="sSlogan" value="' + esc(s.slogan) + '" maxlength="60"></div>' +
       '<div class="field"><label for="sCom">Link de la comunidad (grupo o canal de WhatsApp)' + pend('community') + '</label><input class="in" id="sCom" inputmode="url" value="' + esc(s.community) + '" placeholder="https://chat.whatsapp.com/..."></div>' +
       '<div class="field"><label for="sIg">Instagram' + pend('instagram') + '</label><input class="in" id="sIg" inputmode="url" value="' + esc(s.instagram) + '" placeholder="https://instagram.com/tu_usuario"></div>' +
@@ -286,11 +288,13 @@
     if (wa.length === 10) wa = '57' + wa;
     var err = $('#sErr');
     if (wa.length < 11) { err.textContent = 'Escribe el número con el indicativo del país, por ejemplo +57 314 550 5717.'; err.hidden = false; return; }
+    var spot = $('#sSpot').value.trim();
+    if (spot && !/open\.spotify\.com\/(intl-[a-z-]+\/)?(track|album|playlist|episode)\//.test(spot)) { err.textContent = 'El enlace de Spotify debe empezar por open.spotify.com. Cópialo desde Spotify con Compartir > Copiar enlace.'; err.hidden = false; return; }
     err.hidden = true;
     var key = ((GR.user && GR.user()) || '').toLowerCase() || '_', names = Object.assign({}, d.settings.names || {}), me = $('#sMe').value.trim();
     if (me) names[key] = me; else delete names[key];
     d.settings = {
-      names: names, owner: $('#sOwner').value.trim() || 'Moisés', whatsapp: wa, slogan: $('#sSlogan').value.trim(),
+      names: names, banner: $('#sBanner').value.trim(), spotify: spot, owner: $('#sOwner').value.trim() || 'Moisés', whatsapp: wa, slogan: $('#sSlogan').value.trim(),
       community: $('#sCom').value.trim(), instagram: $('#sIg').value.trim(), tiktok: $('#sTk').value.trim(), facebook: $('#sFb').value.trim()
     };
     if (commit('Ajustes guardados')) render();

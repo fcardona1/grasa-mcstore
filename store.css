@@ -415,3 +415,16 @@ body.lock { overflow: hidden; }
 .lg-body ul { margin: 0 0 .7rem; padding-left: 1.15rem; display: grid; gap: .35rem; }
 .lg-body small { color: var(--mute); }
 @media (min-width: 880px) { .legal-layer .sheet { grid-template-columns: 1fr; max-height: 86vh; } }
+
+/* ---------- la banda sonora: letrero + reproductor ---------- */
+.beat { position: relative; overflow: hidden; padding-block: 3.2rem; background: linear-gradient(#0c0c0f, #131316); border-block: 3px solid #000; }
+.beat::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(214, 40, 57, .09) 0 14px, transparent 14px 28px); pointer-events: none; }
+.beat-in { position: relative; display: grid; gap: 1.3rem; justify-items: center; text-align: center; }
+.beat-line { margin: 0; max-width: 18ch; font: 400 clamp(2.3rem, 9vw, 4.6rem)/.98 var(--display); text-transform: uppercase; text-wrap: balance; transform: rotate(-2deg); }
+.beat-line span { background: linear-gradient(transparent 62%, var(--red) 62% 88%, transparent 88%); padding-inline: .15em; box-decoration-break: clone; -webkit-box-decoration-break: clone; text-shadow: 3px 3px 0 #000; }
+.boombox { width: min(560px, 100%); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .7rem; padding: .9rem; background: #17171b; border: 3px solid #000; border-radius: 16px; box-shadow: 7px 7px 0 var(--pink); }
+.bb-spk { width: clamp(34px, 9vw, 56px); aspect-ratio: 1; border-radius: 50%; border: 3px solid #000; background: radial-gradient(circle at 50% 50%, #000 0 22%, #2a2a31 23% 40%, #000 41% 46%, #34343c 47% 100%); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .06); }
+.bb-mid { display: grid; gap: .55rem; min-width: 0; }
+.bb-label { justify-self: center; padding: .25rem .6rem; background: var(--paper); color: #000; border: 2px solid #000; border-radius: 6px; font: 700 .8rem/1 var(--cond); letter-spacing: .18em; text-transform: uppercase; transform: rotate(-2deg); }
+#beatPlayer iframe { display: block; width: 100%; border: 0; border-radius: 12px; }
+@media (max-width: 420px) { .bb-spk { display: none; } .boombox { grid-template-columns: 1fr; } }
