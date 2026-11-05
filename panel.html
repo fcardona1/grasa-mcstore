@@ -84,7 +84,12 @@
     </div>
     <div class="f-body">
       <div class="photo-box">
-        <div class="ph" id="phPrev"></div>
+        <div class="ph" id="phPrev" tabindex="0" aria-label="Foto del par: arrastra para acomodarla"></div>
+        <div class="ph-tools" id="phTools" hidden>
+          <p class="muted small">Arrastra la foto para acomodarla y usa la barra para acercar o alejar.</p>
+          <div class="zoomrow"><span aria-hidden="true">−</span><label class="sr" for="pfZoom">Acercar o alejar la foto</label><input type="range" id="pfZoom" min="100" max="300" step="5" value="100"><span aria-hidden="true">+</span></div>
+          <div class="ph-actions"><button class="btn small ghost" type="button" id="pfCenter">Centrar</button><button class="btn small ghost" type="button" id="pfFit" aria-pressed="false">Ver completa</button></div>
+        </div>
         <div class="ph-actions">
           <label class="btn small" for="pfFile">Subir foto</label>
           <input id="pfFile" type="file" accept="image/*" class="sr">

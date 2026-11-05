@@ -31,7 +31,7 @@
     return {
       v: 1, seq: 11,
       settings: {
-        owner: 'Moisés', whatsapp: '573145505717', slogan: 'Tu talla. Tu estilo. Tu calle.',
+        owner: 'Moisés', names: {}, whatsapp: '573145505717', slogan: 'Tu talla. Tu estilo. Tu calle.',
         instagram: '', tiktok: 'https://www.tiktok.com/@grasamcstore33', facebook: '', community: 'https://chat.whatsapp.com/L0xldOMPQKaCPyI90AeyK0'
       },
       brands: [
@@ -153,7 +153,14 @@
       '</svg>';
   }
 
+  /* foto acomodable: ix/iy = desplazamiento en % de la caja, iz = zoom, ifit = llenar o ver completa */
+  function imgStyle(p) {
+    var z = Math.max(1, Math.min(3, +p.iz || 1)), x = Math.max(-100, Math.min(100, +p.ix || 0)), y = Math.max(-100, Math.min(100, +p.iy || 0));
+    return 'object-fit:' + (p.ifit === 'contain' ? 'contain' : 'cover') + ';object-position:center;transform:translate(' + x + '%,' + y + '%) scale(' + z + ')';
+  }
+
   window.GR = {
+    imgStyle: imgStyle,
     SIZES: SIZES, US: US, PALETTES: PALETTES, KEY: KEY,
     get: load,
     save: save,
@@ -161,7 +168,7 @@
     esc: esc, money: money, digits: digits, prettyPhone: prettyPhone, pct: pct, brandName: brandName, uid: uid,
     waText: waText, waUrl: waUrl, shoe: shoe,
     art: function (p, cls) {
-      return p.img ? '<img class="' + (cls || 'shoe') + ' photo" src="' + p.img + '" alt="' + esc(p.name) + '">' : shoe(p.pal, p.style, cls);
+      return p.img ? '<img class="' + (cls || 'shoe') + ' photo" src="' + p.img + '" alt="' + esc(p.name) + '" style="' + imgStyle(p) + '">' : shoe(p.pal, p.style, cls);
     },
     logAsk: function (text) {
       var d = load();

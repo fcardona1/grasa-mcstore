@@ -3,8 +3,8 @@
   'use strict';
   /* saludo según quién entró: usa GRCFG.names (correo -> nombre); si no está, el nombre del dueño de la tienda */
   function whoName(st) {
-    var mail = (GR.user && GR.user() || '').toLowerCase(), names = (window.GRCFG && window.GRCFG.names) || {};
-    return names[mail] || (st && st.owner) || 'Moisés';
+    var mail = (GR.user && GR.user() || '').toLowerCase(), names = (window.GRCFG && window.GRCFG.names) || {}, mine = (st && st.names) || {};
+    return mine[mail || '_'] || names[mail] || (st && st.owner) || 'Moisés';
   }
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -132,7 +132,7 @@
     var p = id ? d.products.filter(function (x) { return x.id === id; })[0] : null;
     F = p ? JSON.parse(JSON.stringify(p)) : {
       name: '', brand: d.brands.length ? d.brands[0].id : '', price: 0, oldPrice: 0, sections: [], sizes: [], desc: '',
-      pal: 0, style: 'low', img: null, soldOut: false, hidden: false
+      pal: 0, style: 'low', img: null, ix: 0, iy: 0, iz: 1, ifit: 'cover', soldOut: false, hidden: false
     };
     $('#fTitle').textContent = p ? 'Editar producto' : 'Nuevo producto';
     $('#pfName').value = F.name; $('#pfPrice').value = F.price || ''; $('#pfOld').value = F.oldPrice || ''; $('#pfDesc').value = F.desc || '';
@@ -159,7 +159,32 @@
     }).join('');
     $$('#drawBox .seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.style === F.style)); });
   }
-  function drawPreview() { $('#phPrev').innerHTML = GR.art(F); }
+  function drawPreview() {
+    var ph = $('#phPrev'); ph.innerHTML = GR.art(F);
+    var has = !!F.img; ph.classList.toggle('adj', has); $('#phTools').hidden = !has;
+    $('#pfZoom').value = Math.round((+F.iz || 1) * 100);
+    var fit = $('#pfFit'); fit.setAttribute('aria-pressed', String(F.ifit === 'contain')); fit.textContent = F.ifit === 'contain' ? 'Llenar el cuadro' : 'Ver completa';
+  }
+  function applyImg() { var im = $('#phPrev img'); if (im) im.style.cssText = GR.imgStyle(F); }
+  function clampPos(v) { return Math.max(-70, Math.min(70, v)); }
+  var drag = null;
+  document.addEventListener('pointerdown', function (e) {
+    var ph = e.target.closest && e.target.closest('#phPrev'); if (!ph || !F || !F.img) return;
+    var r = ph.getBoundingClientRect(); drag = { x: e.clientX, y: e.clientY, ix: +F.ix || 0, iy: +F.iy || 0, w: r.width || 1, h: r.height || 1 };
+    try { ph.setPointerCapture(e.pointerId); } catch (x) { /* nada */ } e.preventDefault();
+  });
+  document.addEventListener('pointermove', function (e) {
+    if (!drag || !F) return;
+    F.ix = Math.round(clampPos(drag.ix + (e.clientX - drag.x) / drag.w * 100) * 10) / 10;
+    F.iy = Math.round(clampPos(drag.iy + (e.clientY - drag.y) / drag.h * 100) * 10) / 10; applyImg();
+  });
+  ['pointerup', 'pointercancel'].forEach(function (n) { document.addEventListener(n, function () { drag = null; }); });
+  document.addEventListener('keydown', function (e) {
+    if (!F || !F.img || document.activeElement !== $('#phPrev')) return;
+    var k = { ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2] }[e.key]; if (!k) return;
+    e.preventDefault(); F.ix = clampPos((+F.ix || 0) + k[0]); F.iy = clampPos((+F.iy || 0) + k[1]); applyImg();
+  });
+  document.addEventListener('input', function (e) { if (e.target.id === 'pfZoom' && F) { F.iz = (+e.target.value || 100) / 100; applyImg(); } });
 
   function readImg(file, cb) {
     var fr = new FileReader();
@@ -243,7 +268,8 @@
     function pend(k) { return (s[k] || '').trim() ? '' : '<span class="pending">Pendiente</span>'; }
     v.innerHTML = '<div class="sec-head"><div><h2>Ajustes</h2><p>Los datos de contacto que se ven en la tienda. Lo que dejes vacío aparece como “Próximamente”.</p></div></div>' +
       '<form class="form-grid" id="setf" novalidate>' +
-      '<div class="two"><div class="field"><label for="sOwner">Tu nombre</label><input class="in" id="sOwner" value="' + esc(s.owner) + '" maxlength="30"></div>' +
+      '<div class="field"><label for="sMe">Nombre de tu perfil</label><input class="in" id="sMe" value="' + esc(whoName(s)) + '" maxlength="40" placeholder="Ej. Fabian Cardona"><small class="muted">Es el nombre del saludo del panel cuando entras con tu correo' + (GR.live && GR.user() ? ' (' + esc(GR.user()) + ')' : '') + '. Cada persona que entra pone el suyo.</small></div>' +
+      '<div class="two"><div class="field"><label for="sOwner">Nombre del dueño en la tienda</label><input class="in" id="sOwner" value="' + esc(s.owner) + '" maxlength="30"><small class="muted">Sale en “Hablar con…” y en los mensajes de WhatsApp.</small></div>' +
       '<div class="field"><label for="sWa">WhatsApp donde llegan los mensajes</label><input class="in" id="sWa" inputmode="tel" value="' + esc(GR.prettyPhone(s.whatsapp)) + '" placeholder="+57 300 000 0000"></div></div>' +
       '<div class="field"><label for="sSlogan">Frase de la tienda</label><input class="in" id="sSlogan" value="' + esc(s.slogan) + '" maxlength="60"></div>' +
       '<div class="field"><label for="sCom">Link de la comunidad (grupo o canal de WhatsApp)' + pend('community') + '</label><input class="in" id="sCom" inputmode="url" value="' + esc(s.community) + '" placeholder="https://chat.whatsapp.com/..."></div>' +
@@ -261,8 +287,10 @@
     var err = $('#sErr');
     if (wa.length < 11) { err.textContent = 'Escribe el número con el indicativo del país, por ejemplo +57 314 550 5717.'; err.hidden = false; return; }
     err.hidden = true;
+    var key = ((GR.user && GR.user()) || '').toLowerCase() || '_', names = Object.assign({}, d.settings.names || {}), me = $('#sMe').value.trim();
+    if (me) names[key] = me; else delete names[key];
     d.settings = {
-      owner: $('#sOwner').value.trim() || 'Moisés', whatsapp: wa, slogan: $('#sSlogan').value.trim(),
+      names: names, owner: $('#sOwner').value.trim() || 'Moisés', whatsapp: wa, slogan: $('#sSlogan').value.trim(),
       community: $('#sCom').value.trim(), instagram: $('#sIg').value.trim(), tiktok: $('#sTk').value.trim(), facebook: $('#sFb').value.trim()
     };
     if (commit('Ajustes guardados')) render();
@@ -314,7 +342,9 @@
     if (t.closest('#pfNone')) { F.sizes = []; drawSizes(); return; }
     if ((el = t.closest('#pfPal [data-pal]'))) { F.pal = +el.dataset.pal; drawPal(); drawPreview(); return; }
     if ((el = t.closest('#drawBox [data-style]'))) { F.style = el.dataset.style; drawPal(); drawPreview(); return; }
-    if (t.closest('#pfNoPhoto')) { F.img = null; $('#pfFile').value = ''; drawPreview(); return; }
+    if (t.closest('#pfNoPhoto')) { F.img = null; F.ix = 0; F.iy = 0; F.iz = 1; F.ifit = 'cover'; $('#pfFile').value = ''; drawPreview(); return; }
+    if (t.closest('#pfCenter')) { F.ix = 0; F.iy = 0; F.iz = 1; drawPreview(); return; }
+    if (t.closest('#pfFit')) { F.ifit = F.ifit === 'contain' ? 'cover' : 'contain'; drawPreview(); return; }
   });
 
   document.addEventListener('change', function (e) {
@@ -328,7 +358,7 @@
     if (t.id === 'pfFile' && t.files && t.files[0]) {
       readImg(t.files[0], function (img) {
         if (!img) { toast('No se pudo leer esa imagen. Prueba con otra.'); return; }
-        F.img = img; drawPreview();
+        F.img = img; F.ix = 0; F.iy = 0; F.iz = 1; F.ifit = 'cover'; drawPreview();
       });
     }
   });

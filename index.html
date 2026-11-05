@@ -207,6 +207,19 @@
       </div>
     </div>
 
+    <section class="legal" aria-labelledby="legalH">
+      <p class="legal-kicker" id="legalH"><span>Letra clara</span> Tu compra, segura y sin sorpresas</p>
+      <nav class="legal-links" aria-label="Políticas y términos de la tienda">
+        <button type="button" data-legal="datos">Tratamiento de datos personales</button>
+        <button type="button" data-legal="terminos">Términos de servicio</button>
+        <button type="button" data-legal="cambios">Política de cambios y reembolso</button>
+        <button type="button" data-legal="envios">Política de envíos</button>
+        <button type="button" data-legal="reservas">Política de reservas</button>
+        <button type="button" class="hl" data-legal="nosotros">¿Quiénes somos?</button>
+      </nav>
+      <p class="legal-copy">©2026 GRA$A MC-STORE · Todos los derechos reservados.</p>
+    </section>
+
     <div class="onytek">
       <div class="on-logo">
         <span class="by">Desarrollado por</span>
@@ -275,6 +288,20 @@
   </aside>
 </div>
 
+<!-- letra clara: políticas -->
+<div class="layer modal legal-layer" id="legal" aria-hidden="true">
+  <div class="scrim"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
+    <div class="lg-head">
+      <button class="x static" type="button" data-lclose aria-label="Cerrar">×</button>
+      <p class="eyebrow">GRA$A MC-STORE · Letra clara</p>
+      <h3 id="lgTitle"></h3>
+      <nav class="lg-tabs" id="lgTabs" aria-label="Otros documentos"></nav>
+    </div>
+    <div class="lg-body" id="lgBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
@@ -282,5 +309,6 @@
 <script src="cloud.js"></script>
 <script src="store.js"></script>
 <script src="mobile.js"></script>
+<script src="legal.js"></script>
 </body>
 </html>

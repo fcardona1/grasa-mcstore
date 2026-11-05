@@ -212,3 +212,17 @@ body.locked .pfoot { display: none !important; }
 .lg-on > a { display: block; width: 200px; max-width: 70%; }
 .lg-on img { width: 100%; }
 .lg-on .by { white-space: nowrap; }
+
+.ph.adj { cursor: grab; touch-action: none; } .ph.adj:active { cursor: grabbing; }
+.ph .photo { pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.ph:focus-visible { outline: 3px solid var(--hot, #FF3B52); outline-offset: 2px; }
+.ph-tools { display: grid; gap: .6rem; margin-top: .6rem; }
+.ph-tools p { margin: 0; }
+.zoomrow { display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: center; font-weight: 700; }
+.zoomrow input { width: 100%; min-width: 0; }
+#pfFit[aria-pressed="true"] { background: var(--paper, #F1F0EE); color: #000; }
+/* la foto se acomoda en grande: una columna, vista previa a todo el ancho */
+.photo-box { grid-template-columns: 1fr !important; align-items: start; justify-items: stretch; }
+.photo-box .ph { width: min(100%, 420px); justify-self: center; }
+.photo-box .ph-actions { justify-content: center; }
+@media (min-width: 720px) { .photo-box { grid-template-columns: minmax(0, 360px) 1fr !important; align-items: start; } .photo-box .ph { justify-self: stretch; width: 100%; } .photo-box .ph-actions { justify-content: flex-start; } }

@@ -384,3 +384,34 @@ body.lock { overflow: hidden; }
   .fl svg, .badge-round, .track, .wa-dot::after, .drip { animation: none !important; }
   .sticker-btn, .fl { transition: none; transform: rotate(var(--r, -3deg)); }
 }
+
+/* ---------- fotos: la caja nunca colapsa (Safari) y se ven centradas ---------- */
+.pcard .art { display: block; width: 100%; height: 0; padding-bottom: 89.3%; aspect-ratio: auto; }
+.photo { user-select: none; -webkit-user-drag: none; transform-origin: center; }
+@media (max-width: 879px) { .m-art { height: clamp(280px, 92vw, 460px); } }
+
+/* ---------- letra clara (pie legal) ---------- */
+.legal { display: grid; justify-items: center; gap: .9rem; padding: 1.6rem 0 1.4rem; border-top: 2px dashed rgba(255, 255, 255, .16); text-align: center; }
+.legal-kicker { margin: 0; display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .55rem; font: 600 .95rem/1.2 var(--cond); letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
+.legal-kicker span { padding: .3rem .6rem; background: var(--pink); color: #000; border: 2px solid #000; border-radius: 6px; box-shadow: 3px 3px 0 #000; transform: rotate(-2.5deg); font-weight: 700; }
+.legal-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem .6rem; max-width: 980px; }
+.legal-links button { padding: .55rem .8rem; background: #17171b; color: var(--paper); border: 2px solid rgba(255, 255, 255, .22); border-radius: 8px; box-shadow: 3px 3px 0 var(--red); font: 700 .8rem/1.1 var(--cond); letter-spacing: .1em; text-transform: uppercase; transition: transform .15s, box-shadow .15s; }
+.legal-links button:nth-child(even) { box-shadow: 3px 3px 0 var(--pink); }
+.legal-links button:hover, .legal-links button:focus-visible { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--hot); }
+.legal-links button.hl { background: var(--paper); color: #000; border-color: #000; }
+.legal-copy { margin: 0; font: 600 .78rem/1.4 var(--cond); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+
+.legal-layer .sheet { width: min(760px, 100%); grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+.lg-head { position: relative; display: grid; gap: .5rem; padding: 1.1rem 4.2rem .9rem 1.2rem; border-bottom: 3px solid #000; background: var(--card2); }
+.lg-head .x { position: absolute; top: 10px; right: 10px; }
+.lg-head h3 { margin: 0; font: 400 clamp(1.3rem, 4.5vw, 1.9rem)/1.05 var(--display); text-transform: uppercase; text-wrap: balance; }
+.lg-tabs { display: flex; gap: .45rem; overflow-x: auto; scrollbar-width: none; padding: .2rem 0 .3rem; margin-top: .3rem; }
+.lg-tabs::-webkit-scrollbar { display: none; }
+.lg-tabs button { flex: none; padding: .42rem .75rem; background: transparent; color: var(--soft); border: 2px solid var(--line); border-radius: 999px; font: 700 .78rem/1 var(--cond); letter-spacing: .08em; text-transform: uppercase; }
+.lg-tabs button[aria-pressed="true"] { background: var(--paper); color: #000; border-color: #000; }
+.lg-body { overflow-y: auto; overscroll-behavior: contain; padding: 1.1rem 1.2rem 1.6rem; display: block; color: var(--soft); font-size: .98rem; line-height: 1.6; }
+.lg-body h4 { margin: 1.2rem 0 .3rem; font: 700 1.02rem/1.2 var(--cond); letter-spacing: .1em; text-transform: uppercase; color: var(--pink); }
+.lg-body p { margin: 0 0 .7rem; } .lg-body b { color: var(--paper); } .lg-body a { color: var(--hot); }
+.lg-body ul { margin: 0 0 .7rem; padding-left: 1.15rem; display: grid; gap: .35rem; }
+.lg-body small { color: var(--mute); }
+@media (min-width: 880px) { .legal-layer .sheet { grid-template-columns: 1fr; max-height: 86vh; } }
