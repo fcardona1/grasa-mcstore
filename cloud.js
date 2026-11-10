@@ -13,14 +13,14 @@
   function jset(s, k, v) { try { s.setItem(k, JSON.stringify(v)); } catch (e) { /* sin espacio */ } }
 
   function blank() {
-    return { v: 1, seq: 1, settings: { owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: 'https://open.spotify.com/intl-es/track/3t6SsMiA1b1Ju0HzKHIDSl', whatsapp: '', slogan: '', instagram: '', tiktok: '', facebook: '', community: '' }, brands: [], sections: [], products: [], log: [] };
+    return { v: 1, seq: 1, sellers: [], settings: { owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: 'https://open.spotify.com/intl-es/track/3t6SsMiA1b1Ju0HzKHIDSl', whatsapp: '', slogan: '', instagram: '', tiktok: '', facebook: '', community: '' }, brands: [], sections: [], products: [], log: [] };
   }
   var D = jget(localStorage, CACHE) || blank();
   function sane(x) {
     if (!x || typeof x !== 'object') return blank();
     var b = blank();
     x.settings = Object.assign(b.settings, x.settings || {});
-    ['brands', 'sections', 'products'].forEach(function (k) { if (!Array.isArray(x[k])) x[k] = []; });
+    ['brands', 'sections', 'products', 'sellers'].forEach(function (k) { if (!Array.isArray(x[k])) x[k] = []; });
     x.seq = x.seq || (x.products.length + 1); return x;
   }
   D = sane(D);
@@ -62,6 +62,25 @@
     return authPost('refresh_token', { refresh_token: sess.refresh_token }).then(function (j) { var u = sess.email; var n = parseTok(j); n.email = n.email || u; keep(n); return n.access_token; })
       .catch(function (e) { keep(null); throw e; });
   }
+  /* crea la cuenta de un vendedor (no cambia la sesión de quien lo crea) */
+  GR.signup = function (email, pass, name) {
+    return fetch(C.url + '/auth/v1/signup', { method: 'POST', headers: hdr(null, { 'Content-Type': 'application/json' }), body: JSON.stringify({ email: email, password: pass, data: { full_name: name } }) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok) {
+            var m = String(j.msg || j.error_description || j.message || '');
+            if (/already|registered/i.test(m)) throw new Error('Ese correo ya tiene cuenta.');
+            if (/disabled|not allowed/i.test(m)) throw new Error('Supabase tiene apagado el registro de usuarios. Actívalo en Authentication > Sign In / Providers.');
+            if (/password/i.test(m)) throw new Error('La contraseña es muy débil. Usa mínimo 8 caracteres.');
+            if (/rate|limit/i.test(m)) throw new Error('Demasiados intentos seguidos. Espera unos minutos.');
+            throw new Error('No se pudo crear la cuenta. ' + m);
+          }
+          var u = j.user || j;
+          if (u && Array.isArray(u.identities) && !u.identities.length) throw new Error('Ese correo ya tiene cuenta.');
+          return { confirmed: !!(u && (u.email_confirmed_at || u.confirmed_at)) || !!j.access_token };
+        });
+      });
+  };
   GR.hasSession = function () { return !!sess; };
   /* verifica que la sesión guardada siga viva */
   GR.check = function () { return sess ? token().then(function () { return true; }, function () { return false; }) : Promise.resolve(false); };
@@ -120,17 +139,24 @@
       var k = tipo + '|' + ref; if (tipo === 'visita') { if (sessionStorage.getItem('grasa-v')) return; sessionStorage.setItem('grasa-v', '1'); }
       if (tipo === 'par' && seen[k]) return; seen[k] = 1;
       var dev = /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'movil' : 'pc';
+      var src = ''; try { src = new URLSearchParams(location.search).get('src') || ''; } catch (e0) { /* nada */ }
       fetch(C.url + '/rest/v1/eventos', { method: 'POST', keepalive: true, headers: hdr(null, { 'Content-Type': 'application/json', Prefer: 'return=minimal' }),
-        body: JSON.stringify({ tipo: tipo, ref: ref ? String(ref).slice(0, 40) : null, texto: texto ? String(texto).slice(0, 600) : null, dispositivo: dev, origen: (document.referrer || '').slice(0, 120) || null }) }).catch(function () { /* nada */ });
+        body: JSON.stringify({ tipo: tipo, ref: ref ? String(ref).slice(0, 40) : null, texto: texto ? String(texto).slice(0, 600) : null, dispositivo: dev, origen: src ? 'src:' + src.slice(0, 30) : ((document.referrer || '').slice(0, 120) || null) }) }).catch(function () { /* nada */ });
     } catch (e) { /* nada */ }
   };
   GR.logAsk = function (text) {
     var m = /Ref (GM-\d+)/.exec(text || ''); GR.track('ask', m && m[1], text);
   };
+  /* trae los eventos de los últimos N días, de a 1000 (el límite de Supabase) hasta 8000 */
   GR.events = function (days) {
-    var since = new Date(Date.now() - days * 864e5).toISOString();
+    var since = new Date(Date.now() - days * 864e5).toISOString(), all = [];
     return token().then(function (t) {
-      return fetch(C.url + '/rest/v1/eventos?select=t,tipo,ref,texto,dispositivo&t=gte.' + encodeURIComponent(since) + '&order=t.desc&limit=3000', { headers: hdr(t) });
-    }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+      function page(n) {
+        return fetch(C.url + '/rest/v1/eventos?select=t,tipo,ref,texto,dispositivo,origen&t=gte.' + encodeURIComponent(since) + '&order=t.desc&limit=1000&offset=' + (n * 1000), { headers: hdr(t) })
+          .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function (rows) { all = all.concat(rows); return rows.length === 1000 && n < 7 ? page(n + 1) : all; });
+      }
+      return page(0);
+    });
   };
 })();

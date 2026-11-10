@@ -22,12 +22,14 @@
 </svg>
 
 <a class="sr" href="#catalogo">Ir al catálogo</a>
+<div class="sellerbar" id="sellerBar" hidden><span>Te atiende <b id="sellerName"></b> · vendedor GRA$A</span></div>
 
 <header class="top" id="top">
   <div class="wrap bar">
     <a class="brand-link" href="#top" aria-label="GRA$A MC-STORE, inicio"><img src="img/logo-horizontal.png" alt="GRA$A MC-STORE" width="760" height="304"></a>
     <nav class="nav" aria-label="Secciones">
       <a href="#catalogo">Tennis</a>
+      <a href="#estilo">Tu estilo</a>
       <a href="#talla">Mi talla</a>
       <a href="#comunidad">Comunidad</a>
     </nav>
@@ -122,6 +124,33 @@
     </div>
   </section>
 
+  <!-- PERSONALIZA TU ESTILO -->
+  <section class="style" id="estilo" aria-labelledby="hStyle">
+    <div class="wrap">
+      <p class="eyebrow">Hecho a tu medida</p>
+      <h2 id="hStyle">Personaliza <span class="hl">tu estilo</span></h2>
+      <p class="muted st-sub">Elige color, suela y para quién. Te mostramos los pares que van contigo.</p>
+      <div class="st-grid">
+        <div class="st-stage" aria-live="polite">
+          <span class="st-tag" aria-hidden="true">Tu par</span>
+          <div class="st-glow" id="stGlow" aria-hidden="true"></div>
+          <div class="st-shoe" id="stShoe"></div>
+          <p class="marker st-label" id="stLabel"></p>
+        </div>
+        <div class="st-ctl">
+          <div class="st-step"><span class="st-n" aria-hidden="true">1</span><div><span class="lbl">Color</span><div class="swrow" id="stColors" role="group" aria-label="Color del par"></div></div></div>
+          <div class="st-step"><span class="st-n" aria-hidden="true">2</span><div><span class="lbl">Suela</span><div class="swrow" id="stSoles" role="group" aria-label="Color de la suela"></div></div></div>
+          <div class="st-step"><span class="st-n" aria-hidden="true">3</span><div><span class="lbl">Para</span><div class="stseg" id="stGen" role="group" aria-label="Para quién"></div></div></div>
+        </div>
+      </div>
+      <div class="st-res">
+        <p class="st-count" id="stCount" aria-live="polite"></p>
+        <div class="st-row" id="stRow"></div>
+        <div id="stEmpty"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="catalog" id="catalogo" aria-labelledby="hCat">
     <div class="wrap">
       <div class="cat-head">
@@ -202,7 +231,7 @@
       <div class="fcard">
         <p class="lbl">Escríbenos</p>
         <a class="phone" id="footPhone" href="#" target="_blank" rel="noopener"></a>
-        <a class="btn wa small" id="footWa" href="#" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>Hablar con Moisés</a>
+        <a class="btn wa small" id="footWa" href="#" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>Hablar con <span class="ownerName">Moisés</span></a>
       </div>
       <div class="fcard">
         <p class="lbl">Síguenos</p>
@@ -250,8 +279,8 @@
   <button type="button" id="bCart" aria-label="Abrir mi caja"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l2-4h14l2 4v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Mi caja</span><b id="bCount" hidden>0</b></button>
 </nav>
 <link rel="stylesheet" href="mobile.css">
-<a class="wafab" id="waFab" href="#" target="_blank" rel="noopener" aria-label="Escribir a Moisés por WhatsApp">
-  <span class="wa-label">Escríbele a Moisés</span>
+<a class="wafab" id="waFab" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span class="wa-label">Escríbele a <span class="ownerName">Moisés</span></span>
   <span class="wa-dot"><svg aria-hidden="true"><use href="#i-wa"/></svg></span>
 </a>
 
@@ -260,6 +289,12 @@
   <div class="scrim"></div>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <button class="x" type="button" data-close aria-label="Cerrar">×</button>
+    <button class="x share" id="mShare" type="button" aria-label="Compartir este par" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.8"/><circle cx="6" cy="12" r="2.8"/><circle cx="18" cy="18.5" r="2.8"/><path d="M8.5 10.6l7-3.8M8.5 13.4l7 3.8"/></svg></button>
+    <div class="share-pop" id="sharePop" hidden>
+      <p class="lbl">Compartir este par</p>
+      <a class="btn wa small" id="shWa" href="#" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</a>
+      <button class="btn ghost small" id="shCopy" type="button">Copiar enlace</button>
+    </div>
     <div class="m-art" id="mArt"></div>
     <div class="m-info">
       <p class="eyebrow" id="mBrand"></p>
@@ -314,11 +349,28 @@
   </div>
 </div>
 
+<!-- pantalla de entrada: el toque que permite que suene la canción -->
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateT" hidden>
+  <div class="gate-in">
+    <img class="gate-emb" src="img/emblema.png" alt="" width="520" height="520">
+    <p class="eyebrow">Bienvenido a</p>
+    <h2 id="gateT">GRA$A MC-STORE</h2>
+    <p class="marker" id="gateLine"></p>
+    <button class="btn" id="gateOn" type="button"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>Entrar con música</button>
+    <button class="linkbtn" id="gateOff" type="button">Entrar sin sonido</button>
+  </div>
+</div>
+<button class="musicbtn" id="musicBtn" type="button" aria-label="Poner la música" aria-pressed="false" hidden>
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>
+  <i class="eq" aria-hidden="true"><b></b><b></b><b></b></i>
+</button>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
 <script src="core.js"></script>
 <script src="cloud.js"></script>
+<script src="music.js"></script>
 <script src="store.js"></script>
 <script src="mobile.js"></script>
 <script src="legal.js"></script>

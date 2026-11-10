@@ -80,3 +80,12 @@ body.lock{overflow:hidden}
   .pf-on .by{font-size:.62rem}
   .pf-on .lema{font-size:.78rem;letter-spacing:.08em;margin:0}
 }
+@media (max-width:719px){
+  .tabs button{font-size:.56rem;letter-spacing:.01em;padding-inline:0;overflow:hidden}
+  .tabs button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row.sell{display:flex;flex-direction:column;align-items:stretch;gap:.7rem}
+  .row.sell .acts{grid-column:auto;width:100%;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+  .row.sell .acts .pill{justify-content:center;min-height:42px;padding:0 .3rem;font-size:.75rem;text-align:center}
+  .sell-info{flex:none}
+  .bl li{grid-template-columns:minmax(60px,32%) 1fr auto}
+}

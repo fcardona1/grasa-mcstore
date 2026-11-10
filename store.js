@@ -15,16 +15,40 @@
   }
   function readCart() { try { return JSON.parse(ls('grasa-cart') || '[]') || []; } catch (e) { return []; } }
 
+  function ss(k, v) {
+    try {
+      if (v === undefined) return sessionStorage.getItem(k);
+      if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v);
+    } catch (e) { /* sin almacenamiento */ }
+    return null;
+  }
+  var Q = new URLSearchParams(location.search);
   var d = GR.get();
   var S = {
+    seller: null, st: { color: 'negro', sole: 'blanca', gen: 'all' }, deepDone: false,
     sec: 'all', brand: 'all', q: '', sort: 'new', mine: false,
     size: ls('grasa-size') ? +ls('grasa-size') : null,
     cart: readCart(), open: null, pick: null, opener: null, cm: 25
   };
   if (S.size) S.cm = GR.cmFromSize(S.size);
 
-  function find(id) { for (var i = 0; i < d.products.length; i++) if (d.products[i].id === id) return d.products[i]; return null; }
-  function visible() { return d.products.filter(function (p) { return !p.hidden; }); }
+  /* si entró por el enlace de un vendedor, ve el precio de venta de ese par (si Moisés lo puso) y el WhatsApp va al vendedor */
+  function eff(p) { var s = +p.sale || 0; return S.seller && s ? Object.assign({}, p, { price: s, oldPrice: 0 }) : p; }
+  function cfg() {
+    if (!S.seller) return d;
+    return Object.assign({}, d, { settings: Object.assign({}, d.settings, { owner: String(S.seller.name || '').split(' ')[0] || 'tu vendedor', whatsapp: S.seller.phone }) });
+  }
+  function resolveSeller() {
+    var code = (Q.get('v') || ss('grasa-seller') || '').toLowerCase(); S.seller = null;
+    if (code) {
+      var sl = (d.sellers || []).filter(function (x) { return x.code === code && x.on !== false; })[0];
+      if (sl) { S.seller = sl; ss('grasa-seller', code); }
+    }
+    $('#sellerBar').hidden = !S.seller; document.body.classList.toggle('has-seller', !!S.seller);
+    if (S.seller) $('#sellerName').textContent = S.seller.name;
+  }
+  function find(id) { for (var i = 0; i < d.products.length; i++) if (d.products[i].id === id) return eff(d.products[i]); return null; }
+  function visible() { return d.products.filter(function (p) { return !p.hidden; }).map(eff); }
   function plural(n, a, b) { return n + ' ' + (n === 1 ? a : b); }
   function url(u) { u = (u || '').trim(); if (!u) return ''; return /^https?:\/\//i.test(u) ? u : 'https://' + u.replace(/^\/+/, ''); }
 
@@ -36,20 +60,16 @@
 
   /* ---------- textos que dependen de los ajustes ---------- */
   function renderStatic() {
-    var s = d.settings, o = esc(s.owner || 'Moisés');
+    var s = cfg().settings, o = esc(s.owner || 'Moisés');
     $('#tagline').textContent = s.slogan || '';
     $('#footTag').textContent = s.slogan || '';
     $('#lead').innerHTML = 'Elige tu par, escoge tu talla y pregúntale a ' + o + ' si está disponible. El mensaje le llega listo, con la talla incluida.';
     $$('.ownerName').forEach(function (n) { n.textContent = s.owner || 'Moisés'; });
     /* letrero + reproductor de Spotify (solo se vuelve a armar si cambia el enlace, para no cortar la música) */
     var line = (s.banner || '').trim(), m = /open\.spotify\.com\/(?:intl-[a-z-]+\/)?(track|album|playlist|episode)\/([A-Za-z0-9]+)/.exec(s.spotify || '');
-    var src = m ? 'https://open.spotify.com/embed/' + m[1] + '/' + m[2] + '?utm_source=generator&theme=0' : '';
-    $('#beat').hidden = !(line || src); $('#beatLine').textContent = line; $('#beatBox').hidden = !src;
-    var bp = $('#beatPlayer'); if (bp.dataset.src !== src) {
-      bp.dataset.src = src;
-      bp.innerHTML = src ? '<iframe title="Escucha la canción en Spotify" src="' + src + '" width="100%" height="' + (m[1] === 'track' ? 152 : 352) + '" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>' : '';
-    }
-    var hello = GR.waUrl(d, 'Hola ' + (s.owner || 'Moisés') + ' 👋 Vi la tienda GRA$A MC-STORE y quiero preguntarte por un par.');
+    $('#beat').hidden = !(line || m); $('#beatLine').textContent = line; $('#beatBox').hidden = !m; $('#gateLine').textContent = line;
+    GR.music.set(m ? { type: m[1], id: m[2] } : null);
+    var hello = GR.waUrl(cfg(), 'Hola ' + (s.owner || 'Moisés') + ' 👋 Vi la tienda GRA$A MC-STORE y quiero preguntarte por un par.');
     $('#waFab').href = hello;
     var fp = $('#footPhone'); fp.href = hello; fp.textContent = GR.prettyPhone(s.whatsapp);
     function strip(words) { var one = words.map(function (w) { return '<span>' + esc(w) + '</span>'; }).join(''); return one + one + one + one; }
@@ -179,7 +199,7 @@
     var f = $('[data-close].x, .x', el); if (f) f.focus({ preventScroll: true });
   }
   function closeLayers() {
-    [layerModal, layerDrawer].forEach(function (l) { l.classList.remove('open'); l.setAttribute('aria-hidden', 'true'); });
+    [layerModal, layerDrawer].forEach(function (l) { l.classList.remove('open'); l.setAttribute('aria-hidden', 'true'); }); sharePop(false);
     document.body.classList.remove('lock'); S.open = null;
     if (S.opener && S.opener.focus) { try { S.opener.focus({ preventScroll: true }); } catch (e) { /* nada */ } }
   }
@@ -215,8 +235,8 @@
     var wa = $('#mWa'), hint = $('#mHint'), bub = $('#mBubble');
     $('#mWaLabel').textContent = p.soldOut ? 'Preguntar cuándo llega' : 'Preguntar disponibilidad';
     if (S.pick) {
-      var text = GR.waText(d, [{ p: p, size: S.pick }], p.soldOut ? 'back' : 'ask');
-      wa.href = GR.waUrl(d, text); wa.dataset.text = text; wa.setAttribute('aria-disabled', 'false');
+      var text = GR.waText(cfg(), [{ p: p, size: S.pick }], p.soldOut ? 'back' : 'ask');
+      wa.href = GR.waUrl(cfg(), text); wa.dataset.text = text; wa.setAttribute('aria-disabled', 'false');
       $('#mText').textContent = text; bub.hidden = false;
       hint.classList.remove('warn');
       hint.textContent = 'Talla ' + S.pick + ' lista. Al tocar el botón se abre WhatsApp con este mensaje.';
@@ -237,7 +257,7 @@
     var n = $('#cartCount'); n.textContent = items.length;
     var body = $('#dBody'), foot = $('#dFoot');
     if (!items.length) {
-      body.innerHTML = '<div class="d-empty"><p class="marker">Tu caja está vacía.</p><p class="muted">Agrega pares con su talla y pregúntale a ' + esc(d.settings.owner || 'Moisés') + ' por todos en un solo mensaje.</p></div>';
+      body.innerHTML = '<div class="d-empty"><p class="marker">Tu caja está vacía.</p><p class="muted">Agrega pares con su talla y pregúntale a ' + esc(cfg().settings.owner || 'Moisés') + ' por todos en un solo mensaje.</p></div>';
       foot.innerHTML = '<button class="btn" type="button" data-close>Ver los tennis</button>';
       return;
     }
@@ -246,9 +266,9 @@
         '<button type="button" class="rm" data-rm="' + i + '" aria-label="Quitar ' + esc(it.p.name) + '">×</button></div>';
     }).join('');
     var total = items.reduce(function (a, it) { return a + it.p.price; }, 0);
-    var text = GR.waText(d, items, 'ask');
+    var text = GR.waText(cfg(), items, 'ask');
     foot.innerHTML = '<div class="d-total"><span>Suma de los pares</span><b>' + GR.money(total) + '</b></div>' +
-      '<a class="btn wa" href="' + esc(GR.waUrl(d, text)) + '" target="_blank" rel="noopener" data-text="' + esc(text) + '">Preguntar todo por WhatsApp</a>' +
+      '<a class="btn wa" href="' + esc(GR.waUrl(cfg(), text)) + '" target="_blank" rel="noopener" data-text="' + esc(text) + '">Preguntar todo por WhatsApp</a>' +
       '<button class="linkbtn" type="button" data-clear>Vaciar la caja</button>';
   }
   function addToCart() {
@@ -266,10 +286,84 @@
     toast('Elige tu talla primero');
   }
 
+  function logAsk(text) { GR.logAsk(text + (S.seller ? '\n#v:' + S.seller.code : '')); }
+  GR.toast = toast;
+
+  /* ---------- compartir un par ---------- */
+  function shareData(p) {
+    var u = new URL(location.href); u.search = ''; u.hash = '';
+    u.searchParams.set('p', p.ref); if (S.seller) u.searchParams.set('v', S.seller.code); u.searchParams.set('src', 'share');
+    return { title: p.name + ' · GRA$A MC-STORE', text: 'Mira este par: ' + p.name + ' · ' + GR.money(p.price), url: u.toString() };
+  }
+  function sharePop(on, sd) {
+    var pop = $('#sharePop'), b = $('#mShare');
+    pop.hidden = !on; b.setAttribute('aria-expanded', String(on));
+    if (on && sd) { $('#shWa').href = 'https://wa.me/?text=' + encodeURIComponent(sd.text + '\n' + sd.url); pop.dataset.url = sd.url; }
+  }
+  function copyText(txt) {
+    function legacy() {
+      var a = document.createElement('textarea'); a.value = txt; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;left:-999px;top:0'; document.body.appendChild(a); a.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) { /* nada */ } a.remove(); toast(ok ? 'Enlace copiado' : 'No se pudo copiar. Mantén presionado el enlace.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { toast('Enlace copiado'); }, legacy); else legacy();
+  }
+
+  /* ---------- personaliza tu estilo ---------- */
+  var GENS = [['all', 'Todos'], ['h', 'Hombre'], ['m', 'Mujer']];
+  function styleName() {
+    var st = S.st, co = GR.byId(GR.COLORS, st.color), so = GR.byId(GR.SOLES, st.sole);
+    var parts = [co ? co.n : 'Cualquier color', so ? 'suela ' + so.n.toLowerCase() : 'cualquier suela'];
+    if (st.gen !== 'all') parts.push(st.gen === 'h' ? 'hombre' : 'mujer');
+    return parts.join(' · ');
+  }
+  function styleList() {
+    var st = S.st, exact = [], near = [];
+    visible().forEach(function (p) {
+      if (st.gen !== 'all') { var g = GR.genOf(d, p); if (g !== 'u' && g !== st.gen) return; }
+      var cm = !st.color || GR.colorOf(p) === st.color, sm = !st.sole || GR.soleOf(p) === st.sole;
+      if (cm && sm) exact.push(p); else if (cm && st.sole) near.push(p);
+    });
+    return { exact: exact, near: near };
+  }
+  function renderStyle() {
+    var st = S.st, co = GR.byId(GR.COLORS, st.color);
+    $('#stColors').innerHTML = '<button type="button" class="swc any" data-stc="" aria-pressed="' + !st.color + '" aria-label="Cualquier color" title="Cualquier color">Todos</button>' +
+      GR.COLORS.map(function (c) { return '<button type="button" class="swc" data-stc="' + c.id + '" aria-pressed="' + (st.color === c.id) + '" aria-label="' + c.n + '" title="' + c.n + '" style="--sw:' + c.hex + '"></button>'; }).join('');
+    $('#stSoles').innerHTML = '<button type="button" class="swc any" data-sts="" aria-pressed="' + !st.sole + '" aria-label="Cualquier suela" title="Cualquier suela">Todas</button>' +
+      GR.SOLES.map(function (c) { return '<button type="button" class="swc sole" data-sts="' + c.id + '" aria-pressed="' + (st.sole === c.id) + '" aria-label="Suela ' + c.n.toLowerCase() + '" title="Suela ' + c.n.toLowerCase() + '" style="--sw:' + c.hex + '"></button>'; }).join('');
+    $('#stGen').innerHTML = GENS.map(function (g) { return '<button type="button" data-stg="' + g[0] + '" aria-pressed="' + (st.gen === g[0]) + '">' + g[1] + '</button>'; }).join('');
+    $('#stShoe').innerHTML = GR.shoeCustom(st.color || 'gris', st.sole || 'blanca', 'low', 'stshoe');
+    $('#stGlow').style.setProperty('--g', co ? (co.id === 'multi' ? '#F7931E' : co.hex) : '#8C8E98');
+    $('#stLabel').textContent = styleName();
+    var r = styleList(), all = r.exact.concat(r.near), row = $('#stRow'), em = $('#stEmpty');
+    row.hidden = !all.length;
+    row.innerHTML = all.slice(0, 12).map(function (p, i) {
+      return '<div class="st-item">' + card(p) + (i >= r.exact.length ? '<em class="st-note">Misma pinta, otra suela</em>' : '') + '</div>';
+    }).join('');
+    $('#stCount').innerHTML = r.exact.length ? '<b>' + plural(r.exact.length, 'par', 'pares') + '</b> con tu estilo' + (r.near.length ? ' · y ' + r.near.length + ' parecidos' : '')
+      : (r.near.length ? 'Exacto no hay. Mira los más parecidos' : 'Ese estilo aún no está');
+    if (all.length) { em.innerHTML = ''; return; }
+    var c = cfg(), txt = 'Hola ' + (c.settings.owner || 'Moisés') + ' 👋 Busco unos tennis ' + styleName() + '. ¿Me los puedes conseguir?';
+    em.innerHTML = '<div class="st-none"><p class="marker">No lo tenemos… todavía.</p><a class="btn wa small" href="' + esc(GR.waUrl(c, txt)) + '" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>Pedirlo por WhatsApp</a></div>';
+  }
+
   /* ---------- eventos ---------- */
   document.addEventListener('click', function (e) {
     var t = e.target;
     var el;
+    if (!t.closest('#sharePop, #mShare')) sharePop(false);
+    if (t.closest('#mShare')) {
+      var sp = find(S.open); if (!sp) return;
+      var sd = shareData(sp);
+      if (navigator.share) { navigator.share(sd).catch(function (er) { if (!er || er.name !== 'AbortError') sharePop(true, sd); }); }
+      else sharePop($('#sharePop').hidden, sd);
+      return;
+    }
+    if (t.closest('#shCopy')) { copyText($('#sharePop').dataset.url || ''); sharePop(false); return; }
+    if (t.closest('#shWa')) { sharePop(false); return; }
+    if ((el = t.closest('[data-stc]'))) { S.st.color = el.dataset.stc; renderStyle(); return; }
+    if ((el = t.closest('[data-sts]'))) { S.st.sole = el.dataset.sts; renderStyle(); return; }
+    if ((el = t.closest('[data-stg]'))) { S.st.gen = el.dataset.stg; renderStyle(); return; }
     if ((el = t.closest('[data-open]'))) { openProduct(el.dataset.open, el); return; }
     if ((el = t.closest('[data-pick]'))) {
       if (el.disabled) return;
@@ -283,9 +377,9 @@
     }
     if ((el = t.closest('#mWa'))) {
       if (el.getAttribute('aria-disabled') === 'true') { e.preventDefault(); needSize(); return; }
-      GR.logAsk(el.dataset.text || ''); return;
+      logAsk(el.dataset.text || ''); return;
     }
-    if ((el = t.closest('#dFoot a[data-text]'))) { GR.logAsk(el.dataset.text || ''); return; }
+    if ((el = t.closest('#dFoot a[data-text]'))) { logAsk(el.dataset.text || ''); return; }
     if (t.closest('#mAdd')) { addToCart(); return; }
     if (t.closest('#cartBtn')) { renderCart(); openLayer(layerDrawer, $('#cartBtn')); return; }
     if ((el = t.closest('[data-rm]'))) {
@@ -407,9 +501,23 @@
     if (S.open && !find(S.open)) closeLayers();
   });
 
-  function renderAll() { renderStatic(); renderFinder(); renderGrid(); renderCart(); }
+  /* enlace directo a un par: ?p=GM-003 */
+  function deepOpen() {
+    if (S.deepDone) return;
+    var ref = Q.get('p'); if (!ref) { S.deepDone = true; return; }
+    var p = d.products.filter(function (x) { return x.ref === ref && !x.hidden; })[0];
+    if (p) { S.deepDone = true; openProduct(p.id, null); }
+    else if (GR.loaded) { S.deepDone = true; toast('Ese par ya no está disponible'); }
+  }
+  function renderAll() { resolveSeller(); renderStatic(); renderFinder(); renderStyle(); renderGrid(); renderCart(); deepOpen(); }
   renderAll();
-  GR.track('visita');
+  /* visita: un identificador anónimo permite contar visitantes distintos; si vino por un vendedor se anota */
+  (function () {
+    var uid = ls('grasa-uid'), fresh = false;
+    if (!uid) { uid = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); ls('grasa-uid', uid); fresh = true; }
+    var vc = (Q.get('v') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 30);
+    GR.track('visita', vc ? 'v:' + vc : null, 'u:' + uid + (fresh ? '|n' : ''));
+  })();
   GR.init(function () { d = GR.get(); renderAll(); if (S.open && !find(S.open)) closeLayers(); });
   initHero();
 })();

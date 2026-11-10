@@ -19,6 +19,57 @@
     { n: 'Negro y rosa', c: ['#17171A', '#F27BA8', '#F1F0EE'] }
   ];
 
+  /* personaliza tu estilo: color del par y suela */
+  var COLORS = [
+    { id: 'negro', n: 'Negro', hex: '#17171A' }, { id: 'blanco', n: 'Blanco', hex: '#F4F4F2' },
+    { id: 'rojo', n: 'Rojo', hex: '#D62839' }, { id: 'rosado', n: 'Rosado', hex: '#F27BA8' },
+    { id: 'gris', n: 'Gris', hex: '#8C8E98' }, { id: 'azul', n: 'Azul', hex: '#2C3A57' },
+    { id: 'beige', n: 'Arena', hex: '#C9B28E' }, { id: 'naranja', n: 'Naranja', hex: '#F7931E' },
+    { id: 'verde', n: 'Verde', hex: '#3E9E6B' }, { id: 'multi', n: 'Multicolor', hex: '#F7931E' }
+  ];
+  var SOLES = [
+    { id: 'blanca', n: 'Blanca', hex: '#F4F4F2' }, { id: 'negra', n: 'Negra', hex: '#1B1B1F' },
+    { id: 'crema', n: 'Crema', hex: '#E6D9BC' }, { id: 'caramelo', n: 'Caramelo', hex: '#B8864B' },
+    { id: 'roja', n: 'Roja', hex: '#D62839' }
+  ];
+  var PALCOLOR = ['rojo', 'rosado', 'negro', 'blanco', 'beige', 'gris', 'naranja', 'negro'];
+  function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
+  /* color y suela de un par: lo que puso Moisés; si no puso nada y es un dibujo, se deduce de la paleta */
+  function colorOf(p) { return p.color || (p.img ? '' : PALCOLOR[p.pal] || ''); }
+  function soleOf(p) { return p.sole || (p.img ? '' : (p.pal === 2 ? 'negra' : 'blanca')); }
+  function genOf(d, p) {
+    if (p.gen) return p.gen;
+    var h = false, m = false;
+    (p.sections || []).forEach(function (sid) {
+      var s = (d.sections || []).filter(function (x) { return x.id === sid; })[0], n = s ? s.name : '';
+      if (/hombre|caballero/i.test(n)) h = true; if (/mujer|dama/i.test(n)) m = true;
+    });
+    return h && !m ? 'h' : m && !h ? 'm' : 'u';
+  }
+
+  /* SHA-256 corto (sin librerías): el correo de cada vendedor se guarda como huella, no en claro */
+  function sha(str) {
+    function rr(n, x) { return (x >>> n) | (x << (32 - n)); }
+    var K = [], P = [], i, j, c = 0;
+    for (i = 2; c < 64; i++) { for (j = 2; j * j <= i; j++) if (i % j === 0) break; if (j * j > i) { K[c] = (Math.pow(i, 1 / 3) * 4294967296) | 0; P[c++] = i; } }
+    var H = [], pr = 0; for (i = 2; pr < 8; i++) { for (j = 2; j * j <= i; j++) if (i % j === 0) break; if (j * j > i) H[pr++] = (Math.pow(i, .5) * 4294967296) | 0; }
+    var b = unescape(encodeURIComponent(str)), L = b.length * 8, w = [];
+    for (i = 0; i < b.length; i++) w[i >> 2] |= b.charCodeAt(i) << (24 - (i % 4) * 8);
+    w[L >> 5] |= 0x80 << (24 - L % 32); w[(((L + 64) >> 9) << 4) + 15] = L; for (i = 0; i < w.length; i++) w[i] |= 0;
+    for (j = 0; j < w.length; j += 16) {
+      var W = w.slice(j, j + 16), a = H.slice(0), t;
+      for (i = 0; i < 64; i++) {
+        if (i >= 16) { var s0 = rr(7, W[i - 15]) ^ rr(18, W[i - 15]) ^ (W[i - 15] >>> 3), s1 = rr(17, W[i - 2]) ^ rr(19, W[i - 2]) ^ (W[i - 2] >>> 10); W[i] = (W[i - 16] + s0 + W[i - 7] + s1) | 0; }
+        var S1 = rr(6, a[4]) ^ rr(11, a[4]) ^ rr(25, a[4]), ch = (a[4] & a[5]) ^ (~a[4] & a[6]), t1 = (a[7] + S1 + ch + K[i] + W[i]) | 0;
+        var S0 = rr(2, a[0]) ^ rr(13, a[0]) ^ rr(22, a[0]), mj = (a[0] & a[1]) ^ (a[0] & a[2]) ^ (a[1] & a[2]), t2 = (S0 + mj) | 0;
+        a = [(t1 + t2) | 0, a[0], a[1], a[2], (a[3] + t1) | 0, a[4], a[5], a[6]];
+      }
+      for (i = 0; i < 8; i++) H[i] = (H[i] + a[i]) | 0;
+    }
+    return H.map(function (x) { return ('00000000' + (x >>> 0).toString(16)).slice(-8); }).join('');
+  }
+  function maskMail(m) { m = String(m || ''); var i = m.indexOf('@'); return i < 2 ? m : m.slice(0, 2) + '•••' + m.slice(i); }
+
   function defaults() {
     function p(n, name, brand, secs, price, old, sizes, pal, style, desc, sold) {
       return {
@@ -29,7 +80,7 @@
     }
     function r(a, b) { var o = []; for (var i = a; i <= b; i++) o.push(i); return o; }
     return {
-      v: 1, seq: 11,
+      v: 1, seq: 11, sellers: [],
       settings: {
         owner: 'Moisés', names: {}, banner: 'Mis pies no alcanzan para tanto par.', spotify: 'https://open.spotify.com/intl-es/track/3t6SsMiA1b1Ju0HzKHIDSl', whatsapp: '573145505717', slogan: 'Tu talla. Tu estilo. Tu calle.',
         instagram: '', tiktok: 'https://www.tiktok.com/@grasamcstore33', facebook: '', community: 'https://chat.whatsapp.com/L0xldOMPQKaCPyI90AeyK0'
@@ -113,8 +164,18 @@
 
   /* ---- Zapatillas dibujadas (sin marcas de terceros) ---- */
   var shoeN = 0;
-  function shoe(palIndex, style, cls) {
-    var c = (PALETTES[palIndex] || PALETTES[0]).c;
+  function shoe(palIndex, style, cls) { return shoeX((PALETTES[palIndex] || PALETTES[0]).c, '#F4F4F2', style, cls); }
+  /* zapatilla con el color y la suela que elija el cliente */
+  function hex2rgb(h) { h = h.replace('#', ''); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+  function mix(h, t, k) { var a = hex2rgb(h), b = hex2rgb(t); return '#' + a.map(function (v, i) { v = Math.round(v + (b[i] - v) * k); return (v < 16 ? '0' : '') + v.toString(16); }).join(''); }
+  function lum(h) { var a = hex2rgb(h); return (.299 * a[0] + .587 * a[1] + .114 * a[2]) / 255; }
+  function shoeCustom(colorId, soleId, style, cls) {
+    var co = byId(COLORS, colorId) || COLORS[0], so = byId(SOLES, soleId) || SOLES[0], A = co.hex, c;
+    if (co.id === 'multi') c = ['#F7931E', '#2C3A57', '#F27BA8'];
+    else c = [A, lum(A) < .35 ? mix(A, '#ffffff', .24) : mix(A, '#000000', .2), co.id === 'rojo' ? '#F1F0EE' : (lum(A) > .5 ? '#D62839' : '#F1F0EE')];
+    return shoeX(c, so.hex, style, cls);
+  }
+  function shoeX(c, soleHex, style, cls) {
     var A = c[0], B = c[1], C = c[2];
     var id = 'sh' + (++shoeN);
     var high = style === 'high';
@@ -139,7 +200,7 @@
     return '<svg class="' + (cls || 'shoe') + '" viewBox="0 0 440 250" role="img" aria-label="Dibujo de zapatilla" xmlns="http://www.w3.org/2000/svg">' +
       '<defs><linearGradient id="' + id + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient></defs>' +
       '<ellipse cx="228" cy="228" rx="190" ry="10" fill="#000" opacity=".5"/>' +
-      '<path d="M34 192 C34 183 44 178 58 178 L372 178 C400 178 412 188 410 200 C408 212 396 220 380 220 L60 220 C42 220 34 210 34 192 Z" fill="#F4F4F2"/>' +
+      '<path d="M34 192 C34 183 44 178 58 178 L372 178 C400 178 412 188 410 200 C408 212 396 220 380 220 L60 220 C42 220 34 210 34 192 Z" fill="' + soleHex + '"/>' +
       '<path d="M38 208 L409 208 C406 215 396 220 380 220 L60 220 C46 220 39 215 38 208 Z" fill="' + C + '"/>' +
       '<path d="M44 196 L404 196" stroke="#000" stroke-opacity=".12" stroke-width="2" fill="none"/>' +
       '<path d="' + upper + '" fill="' + A + '"/>' +
@@ -166,9 +227,10 @@
     save: save,
     reset: function () { var d = defaults(); save(d); return d; },
     esc: esc, money: money, digits: digits, prettyPhone: prettyPhone, pct: pct, brandName: brandName, uid: uid,
-    waText: waText, waUrl: waUrl, shoe: shoe,
+    waText: waText, waUrl: waUrl, shoe: shoe, shoeCustom: shoeCustom,
+    COLORS: COLORS, SOLES: SOLES, colorOf: colorOf, soleOf: soleOf, genOf: genOf, byId: byId, sha: sha, maskMail: maskMail,
     art: function (p, cls) {
-      return p.img ? '<img class="' + (cls || 'shoe') + ' photo" src="' + p.img + '" alt="' + esc(p.name) + '" style="' + imgStyle(p) + '">' : shoe(p.pal, p.style, cls);
+      return p.img ? '<img class="' + (cls || 'shoe') + ' photo" src="' + p.img + '" alt="' + esc(p.name) + '" style="' + imgStyle(p) + '">' : (p.color || p.sole) ? shoeCustom(colorOf(p) || 'gris', soleOf(p) || 'blanca', p.style, cls) : shoe(p.pal, p.style, cls);
     },
     logAsk: function (text) {
       var d = load();

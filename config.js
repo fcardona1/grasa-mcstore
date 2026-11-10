@@ -1,1 +1,1 @@
-window.GRCFG = { url: 'https://sakmbnmoxgxbaxmxdavg.supabase.co', key: 'sb_publishable_k6Iex_SbrJWp1AHLNubBOQ_YAtFYeEA', bucket: 'productos', names: { 'fcardona@onytek.co': 'Fabian', 'moisespena212003@gmail.com': 'Moisés' } };
+window.GRCFG = { url: 'https://sakmbnmoxgxbaxmxdavg.supabase.co', key: 'sb_publishable_k6Iex_SbrJWp1AHLNubBOQ_YAtFYeEA', bucket: 'productos', names: { 'fcardona@onytek.co': 'Fabian', 'moisespena212003@gmail.com': 'Moisés' }, admins: ['fcardona@onytek.co', 'moisespena212003@gmail.com'] };
