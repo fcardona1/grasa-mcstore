@@ -286,3 +286,4 @@ body[data-role="seller"] .fab, body[data-role="seller"] .pc-links, body[data-rol
 .bl b { font: 700 1rem/1 var(--cond); color: var(--pink); font-variant-numeric: tabular-nums; }
 .bl.sv li { grid-template-columns: 1fr auto; }
 .bl.sv .bl-n { white-space: normal; }
+.todo-tag { color: var(--flame) !important; font-weight: 700; }

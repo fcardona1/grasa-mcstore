@@ -26,7 +26,7 @@
   var d = GR.get();
   var S = {
     seller: null, st: { color: 'negro', sole: 'blanca', gen: 'all' }, deepDone: false,
-    sec: 'all', brand: 'all', q: '', sort: 'new', mine: false,
+    brandsOpen: false, sec: 'all', brand: 'all', q: '', sort: 'new', mine: false,
     size: ls('grasa-size') ? +ls('grasa-size') : null,
     cart: readCart(), open: null, pick: null, opener: null, cm: 25
   };
@@ -131,10 +131,14 @@
     $('#secChips').innerHTML = secs.map(function (s) {
       return '<button type="button" class="chip' + (s.promo ? ' promo' : '') + '" data-sec="' + esc(s.id) + '" aria-pressed="' + (S.sec === s.id) + '">' + esc(s.name) + '</button>';
     }).join('');
-    var brs = [{ id: 'all', name: 'Todas las marcas' }].concat(d.brands);
-    $('#brandChips').innerHTML = brs.map(function (b) {
-      return '<button type="button" class="chip" data-brand="' + esc(b.id) + '" aria-pressed="' + (S.brand === b.id) + '">' + esc(b.name) + '</button>';
-    }).join('');
+    /* pared de marcas: las que más pares tienen primero, el resto se abre con un toque */
+    var cnt = {}; visible().forEach(function (p) { cnt[p.brand] = (cnt[p.brand] || 0) + 1; });
+    var list = d.brands.filter(function (b) { return cnt[b.id]; }).sort(function (a, b) { return cnt[b.id] - cnt[a.id] || a.name.localeCompare(b.name, 'es'); });
+    var LIM = 7, shown = S.brandsOpen ? list : list.slice(0, LIM);
+    if (S.brand !== 'all' && shown.every(function (b) { return b.id !== S.brand; })) { var sel = list.filter(function (b) { return b.id === S.brand; })[0]; if (sel) shown = shown.concat([sel]); }
+    function tile(id, name, n, extra) { return '<button type="button" class="bt' + (extra || '') + '" data-brand="' + esc(id) + '" aria-pressed="' + (S.brand === id) + '"><span class="bt-n">' + esc(name) + '</span><span class="bt-c">' + n + (n === 1 ? ' par' : ' pares') + '</span></button>'; }
+    $('#brandChips').innerHTML = tile('all', 'Todas', visible().length, ' all') + shown.map(function (b) { return tile(b.id, b.name, cnt[b.id]); }).join('') +
+      (list.length > LIM ? '<button type="button" class="bt more" data-brandmore aria-expanded="' + S.brandsOpen + '">' + (S.brandsOpen ? 'Ver menos' : '+ ' + (list.length - LIM) + ' marcas') + '</button>' : '');
     $('#mine').setAttribute('aria-pressed', String(S.mine));
   }
 
@@ -317,13 +321,16 @@
     return parts.join(' · ');
   }
   function styleList() {
-    var st = S.st, exact = [], near = [];
+    var st = S.st, exact = [], near = [], more = [];
     visible().forEach(function (p) {
       if (st.gen !== 'all') { var g = GR.genOf(d, p); if (g !== 'u' && g !== st.gen) return; }
-      var cm = !st.color || GR.colorOf(p) === st.color, sm = !st.sole || GR.soleOf(p) === st.sole;
+      var pc = GR.colorOf(p), ps = GR.soleOf(p);
+      /* un par al que Moisés aún no le puso color o suela no se descarta: va aparte, para que el cliente lo mire */
+      if ((st.color && !pc) || (st.sole && !ps)) { more.push(p); return; }
+      var cm = !st.color || pc === st.color, sm = !st.sole || ps === st.sole;
       if (cm && sm) exact.push(p); else if (cm && st.sole) near.push(p);
     });
-    return { exact: exact, near: near };
+    return { exact: exact, near: near, more: more };
   }
   function renderStyle() {
     var st = S.st, co = GR.byId(GR.COLORS, st.color);
@@ -335,13 +342,13 @@
     $('#stShoe').innerHTML = GR.shoeCustom(st.color || 'gris', st.sole || 'blanca', 'low', 'stshoe');
     $('#stGlow').style.setProperty('--g', co ? (co.id === 'multi' ? '#F7931E' : co.hex) : '#8C8E98');
     $('#stLabel').textContent = styleName();
-    var r = styleList(), all = r.exact.concat(r.near), row = $('#stRow'), em = $('#stEmpty');
+    var r = styleList(), all = r.exact.concat(r.near, r.more), row = $('#stRow'), em = $('#stEmpty'), ne = r.exact.length + r.near.length;
     row.hidden = !all.length;
     row.innerHTML = all.slice(0, 12).map(function (p, i) {
-      return '<div class="st-item">' + card(p) + (i >= r.exact.length ? '<em class="st-note">Misma pinta, otra suela</em>' : '') + '</div>';
+      return '<div class="st-item">' + card(p) + (i >= ne ? '<em class="st-note">Míralo, a ver si te gusta</em>' : i >= r.exact.length ? '<em class="st-note">Misma pinta, otra suela</em>' : '') + '</div>';
     }).join('');
-    $('#stCount').innerHTML = r.exact.length ? '<b>' + plural(r.exact.length, 'par', 'pares') + '</b> con tu estilo' + (r.near.length ? ' · y ' + r.near.length + ' parecidos' : '')
-      : (r.near.length ? 'Exacto no hay. Mira los más parecidos' : 'Ese estilo aún no está');
+    $('#stCount').innerHTML = r.exact.length ? '<b>' + plural(r.exact.length, 'par', 'pares') + '</b> con tu estilo' + (r.near.length ? ' · y ' + r.near.length + ' parecidos' : '') + (r.more.length ? ' · y ' + r.more.length + ' por mirar' : '')
+      : (r.near.length ? 'Exacto no hay. Mira los más parecidos' : (r.more.length ? 'Estos pares aún no tienen color marcado. Míralos tú' : 'Ese estilo aún no está'));
     if (all.length) { em.innerHTML = ''; return; }
     var c = cfg(), txt = 'Hola ' + (c.settings.owner || 'Moisés') + ' 👋 Busco unos tennis ' + styleName() + '. ¿Me los puedes conseguir?';
     em.innerHTML = '<div class="st-none"><p class="marker">No lo tenemos… todavía.</p><a class="btn wa small" href="' + esc(GR.waUrl(c, txt)) + '" target="_blank" rel="noopener"><svg width="20" height="20" aria-hidden="true"><use href="#i-wa"/></svg>Pedirlo por WhatsApp</a></div>';
@@ -389,6 +396,7 @@
     }
     if (t.closest('[data-clear]')) { S.cart = []; saveCart(); renderCart(); toast('Caja vacía'); return; }
     if ((el = t.closest('[data-sec]'))) { S.sec = el.dataset.sec; renderGrid(); return; }
+    if (t.closest('[data-brandmore]')) { S.brandsOpen = !S.brandsOpen; renderChips(); return; }
     if ((el = t.closest('[data-brand]'))) { S.brand = el.dataset.brand; renderGrid(); return; }
     if (t.closest('#mine')) {
       if (!S.size) { toast('Primero elige tu talla'); location.hash = 'talla'; return; }

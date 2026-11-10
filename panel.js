@@ -124,6 +124,7 @@
       '<div class="info"><b>' + esc(p.name) + '</b><small>' + esc(GR.brandName(d, p.brand) || 'Sin marca') + ' · ' + esc(p.ref) + (secs ? ' · ' + esc(secs) : '') + '</small>' +
       '<span class="price">' + GR.money(p.price) + (off ? '<s>' + GR.money(p.oldPrice) + '</s>' : '') + '</span>' +
       (p.sale ? '<small>Venta vendedores: ' + GR.money(p.sale) + '</small>' : '') +
+      (GR.colorOf(p) && GR.soleOf(p) ? '' : '<small class="todo-tag">Falta color o suela · toca Editar</small>') +
       '<small>Tallas: ' + (p.sizes.length ? esc(p.sizes.join(' · ')) : 'ninguna') + '</small></div>' +
       '<div class="ctrl">' +
       '<button type="button" class="pill warn" aria-pressed="' + p.soldOut + '" data-sold="' + esc(p.id) + '">Agotado</button>' +
