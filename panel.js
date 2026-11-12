@@ -16,7 +16,7 @@
   var F = null;        // producto que se está editando en el formulario
   var editingId = null;
   var arm = null;      // botón de borrar "armado" (segundo toque confirma)
-  var role = 'admin', P = 7, CRED = {};   // quién entró, periodo del dashboard y accesos recién creados
+  var SEL = [], OPEN = null, LP = null, role = 'admin', P = 7, CRED = {};   // quién entró, periodo del dashboard y accesos recién creados
 
   var toastT;
   function toast(msg) {
@@ -115,12 +115,13 @@
       '<button class="btn" type="button" data-new>Nuevo producto</button></div>' +
       (d.products.length ? '<div class="plist">' + d.products.slice().sort(function (a, b) { return b.n - a.n; }).map(prow).join('') + '</div>'
         : '<p class="empty-note">Todavía no hay productos. Toca “Nuevo producto” para subir el primero.</p>') +
+      (SEL.length ? '<div class="selbar" role="toolbar" aria-label="Pares elegidos"><b>' + SEL.length + '</b><button type="button" class="pill warn" data-bulk="sold">Agotado</button><button type="button" class="pill" data-bulk="hide">Oculto</button><button type="button" class="pill danger" data-bulk="del">Borrar</button><button type="button" class="pill" data-bulk="x" aria-label="Cancelar selección">✕</button></div>' : '') +
       (hasSample ? '<div class="reset"><button class="btn ghost small" type="button" data-clear-samples>Borrar los pares de ejemplo</button><span class="fine">Deja solo los pares que tú subas.</span></div>' : '');
   }
   function prow(p) {
     var off = GR.pct(p);
     var secs = p.sections.map(function (sid) { var s = d.sections.filter(function (x) { return x.id === sid; })[0]; return s ? s.name : ''; }).filter(Boolean).join(', ');
-    return '<article class="prow' + (p.hidden ? ' off' : '') + '"><div class="th">' + GR.art(p) + '</div>' +
+    return '<article class="prow' + (p.hidden ? ' off' : '') + (SEL.indexOf(p.id) > -1 ? ' sel' : '') + (OPEN === p.id ? ' open' : '') + '" data-pid="' + esc(p.id) + '"><div class="th">' + GR.art(p) + '</div>' +
       '<div class="info"><b>' + esc(p.name) + '</b><small>' + esc(GR.brandName(d, p.brand) || 'Sin marca') + ' · ' + esc(p.ref) + (secs ? ' · ' + esc(secs) : '') + '</small>' +
       '<span class="price">' + GR.money(p.price) + (off ? '<s>' + GR.money(p.oldPrice) + '</s>' : '') + '</span>' +
       (p.sale ? '<small>Venta vendedores: ' + GR.money(p.sale) + '</small>' : '') +
@@ -511,10 +512,55 @@
     if (commit('Ajustes guardados')) render();
   }
 
+  /* ---------- móvil: selección de varios pares (mantener pulsado) ---------- */
+  function isMob() { return window.matchMedia('(max-width:719px)').matches; }
+  function bulk(kind, btn) {
+    if (kind === 'x') { SEL = []; arm = null; render(); return; }
+    if (!SEL.length) return;
+    if (kind === 'del') {
+      if (arm !== 'bulkdel') { arm = 'bulkdel'; btn.classList.add('arm'); btn.textContent = '¿Seguro?'; return; }
+      arm = null;
+      d.products.forEach(function (p) { if (SEL.indexOf(p.id) > -1) GR.removeImg(p.img); });
+      d.products = d.products.filter(function (p) { return SEL.indexOf(p.id) < 0; });
+      SEL = []; if (commit('Pares borrados')) render(); return;
+    }
+    var picked = d.products.filter(function (p) { return SEL.indexOf(p.id) > -1; });
+    var key = kind === 'sold' ? 'soldOut' : 'hidden', on = !picked.every(function (p) { return p[key]; });
+    picked.forEach(function (p) { p[key] = on; });
+    SEL = []; if (commit('Actualizado')) render();
+  }
+  (function () {
+    var timer = null, sx = 0, sy = 0;
+    function cancel() { clearTimeout(timer); timer = null; }
+    document.addEventListener('pointerdown', function (e) {
+      LP = null;
+      var row = isMob() && tab === 'products' && e.target.closest && e.target.closest('.prow[data-pid]');
+      if (!row || e.target.closest('button,a,input')) return;
+      sx = e.clientX; sy = e.clientY; cancel();
+      timer = setTimeout(function () {
+        timer = null; LP = 'fired'; OPEN = null;
+        var pid = row.dataset.pid; if (SEL.indexOf(pid) < 0) SEL.push(pid);
+        if (navigator.vibrate) { try { navigator.vibrate(12); } catch (x) { /* nada */ } }
+        render(); setTimeout(function () { LP = null; }, 700);
+      }, 500);
+    });
+    document.addEventListener('pointermove', function (e) { if (timer && (Math.abs(e.clientX - sx) > 8 || Math.abs(e.clientY - sy) > 8)) cancel(); });
+    ['pointerup', 'pointercancel', 'scroll'].forEach(function (n) { document.addEventListener(n, cancel, { passive: true }); });
+    document.addEventListener('contextmenu', function (e) { if (isMob() && e.target.closest && e.target.closest('.prow[data-pid]')) e.preventDefault(); });
+  })();
+
   /* ---------- eventos ---------- */
   document.addEventListener('click', function (e) {
     var t = e.target, el, id;
-    if ((el = t.closest('#tabs button'))) { setTab(el.dataset.tab); return; }
+    if ((el = t.closest('[data-bulk]'))) { bulk(el.dataset.bulk, el); return; }
+    if (isMob() && tab === 'products' && (el = t.closest('.prow[data-pid]')) && !t.closest('button,a,input')) {
+      if (LP === 'fired') { LP = null; return; }
+      var pid = el.dataset.pid;
+      if (SEL.length) { var k = SEL.indexOf(pid); if (k > -1) SEL.splice(k, 1); else SEL.push(pid); }
+      else OPEN = OPEN === pid ? null : pid;
+      render(); return;
+    }
+    if ((el = t.closest('#tabs button'))) { SEL = []; OPEN = null; setTab(el.dataset.tab); return; }
     if ((el = t.closest('[data-go]'))) { e.preventDefault(); setTab(el.dataset.go); return; }
     if (t.closest('[data-logout]')) { GR.logout(); location.reload(); return; }
     if ((el = t.closest('[data-eye]'))) { var pi = $('#' + el.dataset.eye); pi.type = pi.type === 'password' ? 'text' : 'password'; return; }

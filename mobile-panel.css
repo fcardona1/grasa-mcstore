@@ -89,3 +89,64 @@ body.lock{overflow:hidden}
   .sell-info{flex:none}
   .bl li{grid-template-columns:minmax(60px,32%) 1fr auto}
 }
+
+/* ===== Móvil compacto (v10): más pantalla útil, escritorio intacto ===== */
+@media (max-width:719px){
+  /* zonas seguras del iPhone */
+  .ptop{padding-top:env(safe-area-inset-top,0px)}
+  .wrap{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  /* cabecera y títulos más bajos */
+  .pbar{padding-block:.3rem}
+  .emb{width:30px;height:30px}
+  .pmain{padding-block:.4rem .8rem;gap:.55rem}
+  .pmain h2{font-size:1.3rem;line-height:1.1}
+  .sec-head{align-items:center}
+  /* KPIs en una sola fila: número grande + nombre corto */
+  .stats,.dash-k{grid-template-columns:repeat(4,1fr);gap:.4rem}
+  .stat{padding:.55rem .35rem;gap:.2rem;justify-items:center;text-align:center;box-shadow:none;border-width:1px}
+  .stat::after{display:none}
+  .stat b{font-size:1.55rem}
+  .stat span{font-size:.54rem;letter-spacing:.04em;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  /* sin tarjetas dentro de tarjetas */
+  .box{padding:.7rem 0;border:0;box-shadow:none;background:transparent;border-radius:0;border-top:1px solid var(--line)}
+  .qk{box-shadow:none;border-width:1px}
+  /* periodo a todo el ancho */
+  .sec-head .seg{display:flex;width:100%}
+  .sec-head .seg button{flex:1;min-height:44px;padding:0 .3rem}
+  .sec-head:has(.seg){flex-direction:column;align-items:stretch}
+  /* productos: filas de 3 líneas a todo el ancho */
+  .plist{gap:0;margin-inline:calc(-1 * max(12px,env(safe-area-inset-left,0px)))}
+  .prow:not(.vrow){grid-template-columns:52px 1fr;gap:0 .65rem;padding:.5rem max(12px,env(safe-area-inset-left,0px));border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;align-items:center;min-height:68px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .prow:not(.vrow) .th{width:52px}
+  .prow:not(.vrow) .info{display:grid;grid-template-columns:1fr auto;gap:.05rem .5rem;align-items:baseline}
+  .prow:not(.vrow) .info b{font-size:.92rem;grid-column:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow:not(.vrow) .info .price{grid-column:2;grid-row:1;font-size:1rem}
+  .prow:not(.vrow) .info .price s{display:none}
+  .prow:not(.vrow) .info small{display:none;font-size:.76rem}
+  .prow:not(.vrow) .info small:first-of-type{display:block;grid-column:1/-1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow:not(.vrow) .info small:last-child{display:block;grid-column:1/-1;color:var(--mute)}
+  .prow:not(.vrow) .info small.todo-tag{display:block;grid-column:1/-1}
+  .prow:not(.vrow) .ctrl{display:none}
+  .prow:not(.vrow).open{background:var(--card)}
+  .prow:not(.vrow).open .ctrl{display:grid;grid-column:1/-1;grid-template-columns:repeat(4,1fr);gap:.35rem;padding:.5rem 0 .2rem;border-top:1px solid var(--line);margin-top:.4rem}
+  .prow:not(.vrow).open .ctrl .pill{min-height:44px}
+  .prow[data-pid][aria-hidden]{display:none}
+  .prow:not(.vrow):has([data-sold][aria-pressed="true"]) .info b::after{content:" · AGOTADO";color:var(--flame,#F7931E);font-size:.68rem}
+  .prow:not(.vrow):has([data-hide][aria-pressed="true"]) .info b::after{content:" · OCULTO";color:var(--mute);font-size:.68rem}
+  .prow.sel{background:rgba(242,123,168,.14);box-shadow:inset 4px 0 0 var(--pink,#F27BA8)}
+  /* mis pares del vendedor: compactos, tallas visibles */
+  .prow.vrow{padding:.55rem .7rem;gap:.4rem .6rem;grid-template-columns:52px 1fr;border-width:1px;box-shadow:none}
+  .prow.vrow .th{width:52px}
+  .szq{min-width:44px;min-height:44px}
+  /* barra de selección múltiple sobre la barra inferior */
+  .selbar{position:fixed;left:0;right:0;z-index:58;bottom:calc(56px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:.35rem;padding:.45rem max(10px,env(safe-area-inset-left,0px));background:#16161a;border-top:2px solid var(--pink,#F27BA8)}
+  .selbar b{font:400 1.4rem/1 var(--display);min-width:1.6rem;text-align:center}
+  .selbar .pill{flex:1;justify-content:center;min-height:44px;padding:0 .3rem;font-size:.72rem}
+  .selbar .pill:last-child{flex:none;width:44px}
+  .selbar .pill.arm{background:#D62839;color:#fff;border-color:#D62839}
+  body:has(.selbar) .fab{display:none}
+  body[data-tab=products] .pmain:has(.selbar){padding-bottom:7.5rem}
+  /* marcas y secciones: filas planas */
+  .row{border-width:0 0 1px;border-radius:0;padding:.55rem 0}
+  .row .pill,.row .acts button{min-height:44px;min-width:44px}
+}
