@@ -158,19 +158,17 @@
     else intro = 'Hola ' + o + ' 👋 Quiero saber si está disponible este par:';
     return intro + '\n\n' + items.map(line).join('\n\n') + '\n\nLo vi en GRA$A MC-STORE.';
   }
-  /* WhatsApp Web / escritorio a veces muestra � en lugar de emojis cuando el texto llega por un enlace.
-     En celular se dejan los emojis; en computador se cambian por palabras para que el mensaje siempre se lea bien. */
-  var EMOJI_OK = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') || (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ''));
-  function wtxt(t) {
-    t = String(t == null ? '' : t);
-    if (EMOJI_OK) return t;
-    return t.replace(/\s*\u{1F44B}\uFE0F?\s*/gu, '! ').replace(/\u{1F45F}\uFE0F?\s*/gu, 'Par: ').replace(/\u{1F4CF}\uFE0F?\s*/gu, '').replace(/\u{1F4B0}\uFE0F?\s*/gu, 'Precio: ')
-      .replace(/[\u{1F000}-\u{1FAFF}\u2600-\u27BF]\uFE0F?/gu, '').replace(/[ \t]+(?=\n)/g, '').replace(/ {2,}/g, ' ').replace(/^ +/gm, '');
+  /* Enlace de WhatsApp. Los emojis se envían SIEMPRE.
+     Celular: wa.me abre la app. Computador: se abre WhatsApp Web directo (web.whatsapp.com/send); así el texto no pasa por
+     la app de escritorio de Windows, que a veces cambia los emojis por �. */
+  var IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') || (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ''));
+  function wenc(t) { return encodeURIComponent(String(t == null ? '' : t)); }
+  function waLink(phone, text) {
+    var ph = digits(phone || ''), q = 'text=' + wenc(text);
+    if (IS_MOBILE) return 'https://wa.me/' + ph + '?' + q;
+    return 'https://web.whatsapp.com/send?' + (ph ? 'phone=' + ph + '&' : '') + q;
   }
-  function wenc(t) { return encodeURIComponent(wtxt(t)); }
-  function waUrl(d, text) {
-    return 'https://wa.me/' + digits(d.settings.whatsapp) + '?text=' + wenc(text);
-  }
+  function waUrl(d, text) { return waLink(d.settings.whatsapp, text); }
 
   /* ---- Zapatillas dibujadas (sin marcas de terceros) ---- */
   var shoeN = 0;
@@ -237,7 +235,7 @@
     save: save,
     reset: function () { var d = defaults(); save(d); return d; },
     esc: esc, money: money, digits: digits, prettyPhone: prettyPhone, pct: pct, brandName: brandName, uid: uid,
-    waText: waText, waUrl: waUrl, wtxt: wtxt, wenc: wenc, shoe: shoe, shoeCustom: shoeCustom,
+    waText: waText, waUrl: waUrl, wenc: wenc, waLink: waLink, shoe: shoe, shoeCustom: shoeCustom,
     COLORS: COLORS, SOLES: SOLES, colorOf: colorOf, soleOf: soleOf, genOf: genOf, byId: byId, sha: sha, maskMail: maskMail,
     art: function (p, cls) {
       return p.img ? '<img class="' + (cls || 'shoe') + ' photo" src="' + p.img + '" alt="' + esc(p.name) + '" style="' + imgStyle(p) + '">' : (p.color || p.sole) ? shoeCustom(colorOf(p) || 'gris', soleOf(p) || 'blanca', p.style, cls) : shoe(p.pal, p.style, cls);

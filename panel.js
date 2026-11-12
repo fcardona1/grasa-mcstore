@@ -197,7 +197,7 @@
     if (e.target.id !== 'vfText') return;
     var me = meSeller(), a = $('#vfGo'), txt = e.target.value.trim(); if (!me || !a) return;
     var msg = 'Hola ' + (d.settings.owner || 'Moisés') + ' 👋 Te reenvío la consulta de un cliente mío (' + me.name + '):\n\n' + txt;
-    a.href = txt ? 'https://wa.me/' + GR.digits(d.settings.whatsapp) + '?text=' + GR.wenc(msg) : '#'; a.setAttribute('aria-disabled', String(!txt));
+    a.href = txt ? GR.waLink(d.settings.whatsapp, msg) : '#'; a.setAttribute('aria-disabled', String(!txt));
   });
 
   function readImg(file, cb) {
@@ -326,7 +326,7 @@
         var link = sellerUrl(s);
         return '<div class="row sell' + (s.on === false ? ' off' : '') + '"><div class="sell-info"><b>' + esc(s.name) + '</b><small>' + esc(GR.prettyPhone(s.phone)) + ' · ' + esc(s.em || '') + '</small><code>' + esc(link.replace(/^https?:\/\//, '')) + '</code></div>' +
           '<span class="acts"><button class="pill" type="button" data-sell-copy="' + esc(s.id) + '">Copiar enlace</button>' +
-          '<a class="pill wa" target="_blank" rel="noopener" href="' + esc('https://wa.me/' + GR.digits(s.phone) + '?text=' + GR.wenc(credMsg(s))) + '">' + (CRED[s.id] ? 'Enviar accesos' : 'Enviar enlace') + '</a>' +
+          '<a class="pill wa" target="_blank" rel="noopener" href="' + esc(GR.waLink(s.phone, credMsg(s))) + '">' + (CRED[s.id] ? 'Enviar accesos' : 'Enviar enlace') + '</a>' +
           '<button class="pill" type="button" aria-pressed="' + (s.on !== false) + '" data-sell-on="' + esc(s.id) + '">' + (s.on === false ? 'Inactivo' : 'Activo') + '</button>' +
           '<button class="pill danger" type="button" data-sell-del="' + esc(s.id) + '">Borrar</button></span></div>';
       }).join('') : '<p class="empty-note">Aún no tienes vendedores. Crea el primero arriba.</p>') + '</div>';
@@ -368,7 +368,7 @@
         var price = +p.sale || p.price;
         var sizes = p.sizes.map(function (n) {
           var txt = 'Hola ' + owner + ' 👋 Soy ' + me.name + '. Un cliente pregunta por este par:\n\n👟 *' + p.name + '*' + (GR.brandName(d, p.brand) ? ' (' + GR.brandName(d, p.brand) + ')' : '') + ' · Ref ' + p.ref + '\n📏 Talla: *' + n + '* (EU)\n💰 ' + GR.money(price) + '\n\n¿Está disponible?';
-          return '<a class="szq" target="_blank" rel="noopener" href="https://wa.me/' + wa + '?text=' + GR.wenc(txt) + '">' + n + '</a>';
+          return '<a class="szq" target="_blank" rel="noopener" href="' + esc(GR.waLink(wa, txt)) + '">' + n + '</a>';
         }).join('');
         return '<article class="prow vrow' + (p.soldOut ? ' off' : '') + '"><div class="th">' + GR.art(p) + '</div><div class="info"><b>' + esc(p.name) + '</b><small>' + esc(GR.brandName(d, p.brand) || 'Sin marca') + ' · ' + esc(p.ref) + (p.soldOut ? ' · AGOTADO' : '') + '</small>' +
           '<span class="price">' + GR.money(price) + '</span>' + (+p.sale ? '<small>Tu precio de venta · en tienda: ' + GR.money(p.price) + '</small>' : '<small>Precio de la tienda</small>') + '</div>' +
