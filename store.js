@@ -302,7 +302,7 @@
   function sharePop(on, sd) {
     var pop = $('#sharePop'), b = $('#mShare');
     pop.hidden = !on; b.setAttribute('aria-expanded', String(on));
-    if (on && sd) { $('#shWa').href = 'https://wa.me/?text=' + encodeURIComponent(sd.text + '\n' + sd.url); pop.dataset.url = sd.url; }
+    if (on && sd) { $('#shWa').href = 'https://wa.me/?text=' + GR.wenc(sd.text + '\n' + sd.url); pop.dataset.url = sd.url; }
   }
   function copyText(txt) {
     function legacy() {
