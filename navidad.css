@@ -1,0 +1,18 @@
+/* Navidad: solo se ve con la clase xmas-on en <html>; apagado no deja rastro */
+.xl, .xmas-count { display: none; }
+.xmas-on .xl { display: block; pointer-events: none; position: absolute; }
+.xmas-on .xl-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.xmas-on .xl-hero { left: 2%; right: 2%; top: -6px; z-index: 4; }
+.xmas-on .brand-link { position: relative; }
+.xmas-on .xl-logo { left: 4%; right: 4%; top: -7px; z-index: 2; }
+.xmas-on .xl-gate { left: 50%; width: clamp(110px, 34vw, 170px); transform: translate(-50%, -8px); top: 0; }
+.xmas-on .gate-in { position: relative; }
+.xmas-on .xl-bulb { filter: drop-shadow(0 0 5px var(--c)); }
+.xmas-on .xmas-count { display: flex; align-items: center; gap: .55rem; width: fit-content; max-width: 100%; margin: .2rem 0 1rem; padding: .45rem .85rem; background: #D62839; color: #fff; border: 2px solid #000; box-shadow: 4px 4px 0 #000; font: 700 .95rem/1.1 var(--cond, 'Barlow Condensed', sans-serif); letter-spacing: .08em; text-transform: uppercase; transform: rotate(-1.5deg); }
+.xmas-on .xmas-count b { font: 400 1.35rem/1 var(--display, 'Anton', sans-serif); letter-spacing: .02em; color: #fff; padding-inline: .1rem; }
+.xmas-on .xc-dot { flex: none; width: 13px; height: 13px; border-radius: 50%; background: #F7931E; border: 2px solid #000; box-shadow: 0 0 8px #F7931E; animation: xmasBlink 1.4s ease-in-out infinite; }
+@keyframes xmasTw { 0%, 100% { opacity: 1; } 50% { opacity: .38; } }
+@keyframes xmasBlink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+.xl-b.tw { animation: xmasTw 1.6s ease-in-out infinite; }
+@media (max-width: 819px) { .xmas-on .xl-logo { top: -5px; } .xmas-on .xmas-count { font-size: .85rem; } }
+@media (prefers-reduced-motion: reduce) { .xl-b.tw, .xc-dot { animation: none !important; } }

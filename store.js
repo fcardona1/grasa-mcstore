@@ -61,6 +61,7 @@
   /* ---------- textos que dependen de los ajustes ---------- */
   function renderStatic() {
     var s = cfg().settings, o = esc(s.owner || 'Moisés');
+    if (GR.xmas) GR.xmas.apply(s);
     $('#tagline').textContent = s.slogan || '';
     $('#footTag').textContent = s.slogan || '';
     $('#lead').innerHTML = 'Elige tu par, escoge tu talla y pregúntale a ' + o + ' si está disponible. El mensaje le llega listo, con la talla incluida.';

@@ -490,6 +490,7 @@
       '<div class="field"><label for="sIg">Instagram' + pend('instagram') + '</label><input class="in" id="sIg" inputmode="url" value="' + esc(s.instagram) + '" placeholder="https://instagram.com/tu_usuario"></div>' +
       '<div class="two"><div class="field"><label for="sTk">TikTok' + pend('tiktok') + '</label><input class="in" id="sTk" inputmode="url" value="' + esc(s.tiktok) + '" placeholder="https://tiktok.com/@tu_usuario"></div>' +
       '<div class="field"><label for="sFb">Facebook' + pend('facebook') + '</label><input class="in" id="sFb" inputmode="url" value="' + esc(s.facebook) + '" placeholder="https://facebook.com/tu_pagina"></div></div>' +
+      '<div class="field"><label class="sw"><input type="checkbox" id="sXmas"' + (s.xmas === false ? '' : ' checked') + '><span>Detalles de Navidad en la tienda (luces y cuenta regresiva)</span></label><p class="fine">Se encienden solos del 1 de noviembre al 6 de enero. Aquí los puedes apagar.</p></div>' +
       '<p class="err" id="sErr" role="alert" hidden></p>' +
       '<div><button class="btn" type="submit">Guardar ajustes</button></div></form>' +
       (GR.live ? '<div class="reset"><span class="fine">Sesión: ' + esc(GR.user() || '') + '</span><button class="btn ghost small" type="button" data-logout>Cerrar sesión</button></div>' : '<div class="reset"><button class="btn ghost small" type="button" data-reset>Volver al ejemplo inicial</button><span class="fine">Borra tus cambios de esta prueba y deja los datos de ejemplo.</span></div>');
@@ -507,7 +508,7 @@
     if (me) names[key] = me; else delete names[key];
     d.settings = {
       names: names, banner: $('#sBanner').value.trim(), spotify: spot, owner: $('#sOwner').value.trim() || 'Moisés', whatsapp: wa, slogan: $('#sSlogan').value.trim(),
-      community: $('#sCom').value.trim(), instagram: $('#sIg').value.trim(), tiktok: $('#sTk').value.trim(), facebook: $('#sFb').value.trim()
+      community: $('#sCom').value.trim(), instagram: $('#sIg').value.trim(), tiktok: $('#sTk').value.trim(), facebook: $('#sFb').value.trim(), xmas: $('#sXmas').checked
     };
     if (commit('Ajustes guardados')) render();
   }
