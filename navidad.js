@@ -47,7 +47,7 @@
   var mounted = false;
   function mount() {
     if (mounted) return; mounted = true;
-    var art = document.getElementById('art');
+    var art = document.getElementById('stickerBtn') || document.getElementById('art');
     if (art) { var a = document.createElement('div'); a.className = 'xl xl-hero'; a.appendChild(garland({ w: 430, h: 92, n: 12, sag: 20, r: 8.5, segs: 3 })); art.appendChild(a); }
     var logo = document.querySelector('.brand-link');
     if (logo) { var b = document.createElement('span'); b.className = 'xl xl-logo'; b.appendChild(garland({ w: 100, h: 18, n: 6, sag: 3, r: 3.6, segs: 3, wire: 1.4, stroke: 1 })); logo.appendChild(b); }

@@ -23,7 +23,9 @@ body.lock .sheet,body.lock .drawer .panel,body.lock .d-body{touch-action:pan-y}
   .hero-grid{gap:1rem}
   .floats,.doodle,.badge-round,.spray-hint,.hero-bg .splat{display:none}
   .hero-art{display:grid;justify-items:center}
-  .sticker{max-height:34vh;width:auto}
+  .sticker-btn{width:fit-content;max-width:100%;margin-inline:auto;justify-self:center}
+  .hero-art{padding-inline:0;width:100%}
+  .sticker{max-height:34vh;width:auto;max-width:100%;display:block}
   .steps{gap:.5rem .9rem}.steps li{font-size:.8rem}
   .cta{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.cta .btn{width:100%;justify-content:center;padding-inline:.5rem}
   .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));-webkit-overflow-scrolling:touch}

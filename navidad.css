@@ -2,7 +2,7 @@
 .xl, .xmas-count { display: none; }
 .xmas-on .xl { display: block; pointer-events: none; position: absolute; }
 .xmas-on .xl-svg { display: block; width: 100%; height: auto; overflow: visible; }
-.xmas-on .xl-hero { left: 2%; right: 2%; top: -6px; z-index: 4; }
+.xmas-on .xl-hero { left: -3%; right: -3%; top: -12px; z-index: 4; }
 .xmas-on .brand-link { position: relative; }
 .xmas-on .xl-logo { left: 4%; right: 4%; top: -7px; z-index: 2; }
 .xmas-on .xl-gate { left: 50%; width: clamp(110px, 34vw, 170px); transform: translate(-50%, -8px); top: 0; }
